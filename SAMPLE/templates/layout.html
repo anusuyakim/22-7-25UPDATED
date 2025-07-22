@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Vendhan Info Tech | Innovation in Technology{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#0082ca',
+                        'brand-blue-light': '#0095e6',
+                        'brand-gray': '#f5f5f5',
+                        'brand-dark': '#121212',
+                        'header-blue': '#002d62', // Tata-like blue
+                    },
+                    fontFamily: { sans: ['"Inter"', 'sans-serif'] },
+                    keyframes: { 'fade-in': { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } },
+                    animation: { 'fade-in': 'fade-in 0.6s ease-out forwards' },
+                },
+            },
+            darkMode: 'class',
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-white dark:bg-brand-dark font-sans">
+    <div id="loadingOverlay" class="loading-overlay"><div class="loading-spinner"></div></div>
+
+    <div id="app-wrapper" class="bg-white dark:bg-brand-dark text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
+
+        <!-- HEADER WITH LOGO -->
+        <header class="fixed top-0 left-0 right-0 z-50 bg-header-blue text-white shadow-lg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    
+                    <!-- MODIFIED LOGO SECTION -->
+                    <a href="{{ url_for('home') }}" class="flex items-center gap-3">
+                        <!-- Image Tag for the Logo -->
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Vendhan Info Tech Logo" class="h-10 w-auto">
+                        <!-- Text Part of the Logo -->
+                        <div class="flex flex-col">
+                            <span class="text-xl font-extrabold tracking-wider text-white">VENDHAN</span>
+                            <span class="text-xs font-light tracking-widest text-gray-300">INFO TECH</span>
+                        </div>
+                    </a>
+                    
+                    <!-- DESKTOP NAVIGATION (Unchanged from previous version) -->
+                    <nav class="hidden lg:flex items-center h-full space-x-8">
+                        <div class="h-full flex items-center">
+                            <a href="{{ url_for('home') }}" class="main-nav-link no-underline {{ 'nav-active' if current_page == 'home' else '' }}">Home</a>
+                        </div>
+                        
+                        <div class="relative group h-full flex items-center">
+                             <a href="{{ url_for('about_details') }}" class="main-nav-link {{ 'nav-active' if current_page == 'about' else '' }}">About</a>
+                             <div class="custom-dropdown">
+                                 <a href="{{ url_for('about_details') }}" class="custom-dropdown-link"><span>Our Company</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                 <a href="{{ url_for('about_details') }}#leadership" class="custom-dropdown-link"><span>Leadership</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                 <a href="{{ url_for('mission_vision') }}" class="custom-dropdown-link"><span>Mission & Vision</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                             </div>
+                        </div>
+
+                        <div class="relative group h-full flex items-center">
+                            <a href="{{ url_for('services_overview') }}" class="main-nav-link {{ 'nav-active' if current_page == 'services' else '' }}">Services</a>
+                             <div class="custom-dropdown">
+                                 <a href="{{ url_for('services_ai') }}" class="custom-dropdown-link"><span>AI & Machine Learning</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                 <a href="{{ url_for('services_digital') }}" class="custom-dropdown-link"><span>Digital Transformation</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                 <a href="{{ url_for('services_software') }}" class="custom-dropdown-link"><span>Software Development</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                 <a href="{{ url_for('services_cybersecurity') }}" class="custom-dropdown-link"><span>Data & Cybersecurity</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                             </div>
+                        </div>
+
+                        <div class="relative group h-full flex items-center">
+                            <a href="{{ url_for('portfolio_logistics') }}" class="main-nav-link {{ 'nav-active' if current_page == 'portfolio' else '' }}">Portfolio</a>
+                            <div class="custom-dropdown">
+                                <a href="{{ url_for('portfolio_logistics') }}" class="custom-dropdown-link"><span>AI Logistics Platform</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                <a href="{{ url_for('portfolio_cloud') }}" class="custom-dropdown-link"><span>Cloud Migration</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                <a href="{{ url_for('portfolio_fintech') }}" class="custom-dropdown-link"><span>Secure Fintech App</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                <a href="{{ url_for('portfolio_erp') }}" class="custom-dropdown-link"><span>Enterprise ERP</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                            </div>
+                       </div>
+                       
+                        <div class="relative group h-full flex items-center">
+                            <a href="{{ url_for('careers_overview') }}" class="main-nav-link {{ 'nav-active' if current_page == 'careers' else '' }}">Careers</a>
+                            <div class="custom-dropdown">
+                                <a href="{{ url_for('careers_overview') }}" class="custom-dropdown-link"><span>Why Join Us?</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                <a href="{{ url_for('careers_overview') }}#openings" class="custom-dropdown-link"><span>Current Openings</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                                <a href="{{ url_for('application_form') }}" class="custom-dropdown-link"><span>Apply Now</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <!-- RIGHT-SIDE CONTROLS (Unchanged) -->
+                    <div class="flex items-center space-x-6">
+                        <div class="hidden sm:flex items-center space-x-2 text-sm">
+                            <span>Mode:</span>
+                            <button id="theme-toggle-link" class="font-semibold uppercase tracking-wider"></button>
+                        </div>
+                        <a href="{{ url_for('contact_page') }}" class="main-nav-link hidden sm:block {{ 'nav-active' if current_page == 'contact' else '' }}">Contact</a>
+                        <button id="mobile-menu-toggle" class="lg:hidden p-2" aria-label="Toggle mobile menu"></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+               
+                    <!-- RIGHT-SIDE CONTROLS -->
+                    <div class="flex items-center space-x-6">
+                        <div class="hidden sm:flex items-center space-x-2 text-sm">
+                            <span>Mode:</span>
+                            <button id="theme-toggle-link" class="font-semibold uppercase tracking-wider"></button>
+                        </div>
+                        <a href="{{ url_for('contact_page') }}" class="main-nav-link hidden sm:block {{ 'nav-active' if current_page == 'contact' else '' }}">Contact</a>
+                        <!-- Mobile Menu Toggle -->
+                        <button id="mobile-menu-toggle" class="lg:hidden p-2" aria-label="Toggle mobile menu"></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- MOBILE MENU -->
+        <div id="mobile-menu" class="lg:hidden fixed top-20 left-0 right-0 bottom-0 bg-header-blue z-40 p-8 transition-transform duration-300 ease-in-out translate-x-full">
+            <nav class="flex flex-col space-y-4 overflow-y-auto">
+                 <a href="{{ url_for('home') }}" class="mobile-nav-link">Home</a>
+                 <a href="{{ url_for('about_details') }}" class="mobile-nav-link">About</a>
+                 <a href="{{ url_for('services_overview') }}" class="mobile-nav-link">Services</a>
+                 <a href="{{ url_for('portfolio_logistics') }}" class="mobile-nav-link">Portfolio</a>
+                 <a href="{{ url_for('announcements_page') }}" class="mobile-nav-link">Announcements</a>
+                 <a href="{{ url_for('careers_overview') }}" class="mobile-nav-link">Careers</a>
+                 <a href="{{ url_for('contact_page') }}" class="mobile-nav-link">Contact</a>
+                 <hr class="border-white/20 my-4">
+                 <div class="flex items-center space-x-2 text-sm text-white">
+                    <span>Mode:</span>
+                    <button id="mobile-theme-toggle-link" class="font-semibold uppercase tracking-wider"></button>
+                </div>
+            </nav>
+        </div>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        
+        <!-- FOOTER -->
+        <footer class="bg-gray-900 dark:bg-black text-gray-300">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+                    <div class="sm:col-span-2 lg:col-span-1">
+                        <a href="{{ url_for('home') }}" class="flex flex-col flex-shrink-0 mb-4">
+                            <span class="text-2xl font-extrabold tracking-wider text-white">VENDHAN</span>
+                            <span class="text-xs font-light tracking-widest text-gray-400">INFO TECH</span>
+                        </a>
+                        <p class="text-sm text-gray-400">A dynamic, women-led IT powerhouse committed to engineering a brighter digital future.</p>
+                         <div class="social-links mt-4 flex space-x-4">
+                            <a href="#" target="_blank" class="text-gray-400 hover:text-white" aria-label="LinkedIn"><i class="fab fa-linkedin text-xl"></i></a>
+                            <a href="#" target="_blank" class="text-gray-400 hover:text-white" aria-label="Twitter"><i class="fab fa-twitter text-xl"></i></a>
+                            <a href="#" target="_blank" class="text-gray-400 hover:text-white" aria-label="Facebook"><i class="fab fa-facebook text-xl"></i></a>
+                            <a href="#" target="_blank" class="text-gray-400 hover:text-white" aria-label="Instagram"><i class="fab fa-instagram text-xl"></i></a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-white">Company</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="{{ url_for('about_details') }}" class="footer-link">About Us</a></li>
+                            <li><a href="{{ url_for('careers_overview') }}" class="footer-link">Careers</a></li>
+                            <li><a href="{{ url_for('contact_page') }}" class="footer-link">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-white">Services</h3>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="{{ url_for('services_ai') }}" class="footer-link">AI & Machine Learning</a></li>
+                            <li><a href="{{ url_for('services_software') }}" class="footer-link">Software Development</a></li>
+                            <li><a href="{{ url_for('services_digital') }}" class="footer-link">Cloud Solutions</a></li>
+                            <li><a href="{{ url_for('services_cybersecurity') }}" class="footer-link">Cybersecurity</a></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-white">Contact Info</h3>
+                        <ul class="mt-4 space-y-3 text-sm text-gray-400">
+                           <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3"></i><span>V.O.C. Nagar, Oddanchatram, Dindigul</span></li>
+                           <li class="flex items-start"><i class="fas fa-phone mt-1 mr-3"></i><span>+91 98765 43210</span></li>
+                           <li class="flex items-start"><i class="fas fa-envelope mt-1 mr-3"></i><span>info@vendhaninfotech.com</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-16 pt-8 border-t border-gray-700 text-center">
+                    <p class="text-sm text-gray-400">© <script>document.write(new Date().getFullYear())</script> Vendhan Info Tech. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- CHATBOT -->
+        <button id="chatbot-toggle" class="fixed bottom-6 right-6 bg-header-blue hover:opacity-80 text-white rounded-full p-4 shadow-lg z-[60] transition-all hover:scale-110 focus:outline-none ring-4 ring-blue-500/30" aria-label="Open chat"></button>
+        <div id="chatbot-window" class="fixed bottom-24 right-6 w-[90vw] max-w-md h-[70vh] max-h-[600px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl z-[50] flex flex-col transition-all duration-300 ease-in-out opacity-0 translate-y-4 pointer-events-none">
+            <header class="bg-header-blue text-white p-4 flex justify-between items-center flex-shrink-0 rounded-t-xl">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-xl">V</div>
+                    <div>
+                        <h3 class="font-bold text-lg">Vendhan AI Assistant</h3>
+                        <p class="text-sm text-blue-200 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1.5"></span>Online</p>
+                    </div>
+                </div>
+                <button id="chatbot-close-btn" class="p-1 rounded-full hover:bg-white/20" aria-label="Close chat popup"></button>
+            </header>
+            <main id="chatbot-messages-container" class="flex-1 p-4 overflow-y-auto bg-gray-100 dark:chat-bg space-y-4 no-scrollbar"></main>
+            <footer class="p-3 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+                 <form id="chat-form" class="flex items-center bg-gray-100 dark:chat-input-bg rounded-full px-2">
+                    <input id="chatbot-input" type="text" placeholder="Ask me anything..." autocomplete="off" required class="flex-1 bg-transparent p-2.5 text-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none">
+                    <button id="chatbot-send-btn" type="submit" class="bg-header-blue text-white rounded-full p-2 disabled:bg-gray-400 dark:disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"></button>
+                </form>
+            </footer>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block page_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}Portfolio: Enterprise ERP Implementation | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="bg-brand-gray dark:bg-gray-900 py-24" data-aos="fade-in">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">Case Study</p>
+                <h1 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Custom Enterprise ERP Implementation</h1>
+                <p class="mt-6 text-xl text-gray-600 dark:text-gray-300 leading-relaxed">Building a bespoke Enterprise Resource Planning system for a manufacturing client to unify HR, inventory, and finance into a single source of truth.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 -mt-12" data-aos="fade-up">
+        <div class="rounded-xl overflow-hidden shadow-2xl"><img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop" alt="ERP Dashboard" class="w-full h-auto"></div>
+    </div>
+    
+    <section class="py-24 bg-white dark:bg-brand-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-12">
+                <div class="md:col-span-2 space-y-12">
+                    <div data-aos="fade-up">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">The Challenge</h2>
+                        <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">A mid-sized manufacturing company was operating with disconnected, siloed systems for its core business functions. The finance team used one software, HR another, and inventory was tracked in spreadsheets. This led to data inconsistencies, inefficient manual data entry, and a complete lack of real-time visibility into the business's overall health.</p>
+                    </div>
+                    <div data-aos="fade-up">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Our Solution</h2>
+                        <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">Instead of forcing an off-the-shelf ERP that wouldn't fit their unique workflows, we built a modular, custom ERP system from scratch. We worked closely with each department to understand their specific needs and developed dedicated modules for each business function, all integrated into a central database and a unified web-based dashboard.</p>
+                        <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600 dark:text-gray-300">
+                            <li>Developed with a Java Spring Boot backend for robustness and scalability.</li>
+                            <li>Created a role-based access control system to ensure data security.</li>
+                            <li>Built an analytics module with real-time reporting and data visualization.</li>
+                            <li>Ensured the system could integrate with their existing factory floor machinery for live production data.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:col-span-1" data-aos="fade-left">
+                    <div class="bg-brand-gray dark:bg-gray-900 rounded-lg p-6 sticky top-28">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Key Outcomes</h3>
+                        <div class="mt-6 space-y-6">
+                            <div><p class="text-3xl font-bold text-brand-blue dark:text-blue-400">90%</p><p class="mt-1 text-gray-600 dark:text-gray-400">Reduction in manual data entry errors.</p></div>
+                            <div><p class="text-3xl font-bold text-brand-blue dark:text-blue-400">100%</p><p class="mt-1 text-gray-600 dark:text-gray-400">Real-time visibility into inventory levels.</p></div>
+                            <div><p class="text-3xl font-bold text-brand-blue dark:text-blue-400">40%</p><p class="mt-1 text-gray-600 dark:text-gray-400">Faster financial closing period at the end of each month.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block title %}Digital Transformation Services | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <!-- HERO SECTION -->
+    <section class="relative bg-gray-900 py-32 text-white" data-aos="fade-in">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-30" alt="Collaboration">
+            <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/70 to-transparent"></div>
+        </div>
+        <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 items-center">
+            <div class="max-w-xl">
+                <p class="text-base font-semibold text-blue-400 uppercase tracking-wider">Our Services</p>
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight mt-2">Digital Transformation</h1>
+                <p class="mt-6 text-lg text-gray-300">We are your strategic partner in navigating the complexities of modernization. We help you leverage cloud technology, optimize processes, and build a resilient digital foundation for sustained growth.</p>
+                <a href="{{ url_for('contact_page') }}" class="mt-8 inline-block bg-brand-blue hover:bg-brand-blue-light text-white font-semibold py-3 px-6 rounded-md transition-colors">Plan Your Transformation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETAILED OFFERINGS -->
+    <section class="py-24 bg-white dark:bg-brand-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12" data-aos="fade-up">Our Core Transformation Areas</h2>
+                <div class="space-y-10">
+                    <!-- Offering 1 -->
+                    <div class="flex flex-col md:flex-row items-start gap-8" data-aos="fade-up">
+                        <div class="flex-shrink-0 w-16 h-16 bg-brand-gray dark:bg-gray-800 text-brand-blue dark:text-blue-400 rounded-lg flex items-center justify-center text-3xl"><i class="fas fa-cloud"></i></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Cloud Migration & Strategy</h3>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">Unlock scalability, flexibility, and cost-efficiency. We provide end-to-end cloud services, from initial assessment and strategy to seamless migration and ongoing management on platforms like AWS, Azure, and Google Cloud.</p>
+                        </div>
+                    </div>
+                    <!-- Offering 2 -->
+                    <div class="flex flex-col md:flex-row items-start gap-8" data-aos="fade-up">
+                        <div class="flex-shrink-0 w-16 h-16 bg-brand-gray dark:bg-gray-800 text-brand-blue dark:text-blue-400 rounded-lg flex items-center justify-center text-3xl"><i class="fas fa-sitemap"></i></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Legacy System Modernization</h3>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">Don't let outdated technology hold you back. We specialize in refactoring and re-architecting legacy applications, transforming them into modern, microservices-based systems that are agile and easy to maintain.</p>
+                        </div>
+                    </div>
+                    <!-- Offering 3 -->
+                    <div class="flex flex-col md:flex-row items-start gap-8" data-aos="fade-up">
+                        <div class="flex-shrink-0 w-16 h-16 bg-brand-gray dark:bg-gray-800 text-brand-blue dark:text-blue-400 rounded-lg flex items-center justify-center text-3xl"><i class="fas fa-infinity"></i></div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">DevOps & CI/CD Implementation</h3>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">Accelerate your time-to-market and improve software quality. We establish robust DevOps cultures and implement automated Continuous Integration/Continuous Deployment (CI/CD) pipelines for faster, more reliable releases.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

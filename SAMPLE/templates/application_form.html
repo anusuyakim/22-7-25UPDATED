@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+{% block title %}Apply for a Position | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="relative bg-brand-dark py-24 sm:py-32 min-h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop');">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+        <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center" data-aos="fade-in">
+            <h1 class="text-4xl md:text-5xl font-light text-white">Join Our Team</h1>
+            <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">Ready to make an impact? Complete the form below to apply for a role. We're excited to learn more about you.</p>
+
+            <form id="detailedApplicationForm" enctype="multipart/form-data" class="mt-12 text-left bg-white/5 dark:bg-black/20 p-8 rounded-2xl shadow-lg space-y-8">
+                <input type="hidden" name="verification_token">
+                
+                <!-- Personal Information -->
+                <fieldset class="space-y-6">
+                    <legend class="text-xl font-semibold text-white border-b border-gray-600 pb-2 mb-6">1. Personal Information</legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label for="firstName" class="form-label">First Name *</label>
+                            <input type="text" name="firstName" required class="form-input" placeholder="Your first name">
+                        </div>
+                        <div>
+                            <label for="lastName" class="form-label">Last Name *</label>
+                            <input type="text" name="lastName" required class="form-input" placeholder="Your last name">
+                        </div>
+                        <div>
+                            <label for="email" class="form-label">Email Address *</label>
+                            <input type="email" name="email" required class="form-input" placeholder="you@example.com">
+                        </div>
+                        <div>
+                            <label for="phoneNumber" class="form-label">Phone Number *</label>
+                            <input type="tel" name="phoneNumber" required class="form-input" placeholder="+91 12345 67890">
+                        </div>
+                        <div>
+                            <label for="city" class="form-label">City *</label>
+                            <input type="text" name="city" required class="form-input" placeholder="e.g., Chennai">
+                        </div>
+                        <div>
+                            <label for="district" class="form-label">District *</label>
+                            <input type="text" name="district" required class="form-input" placeholder="e.g., Dindigul">
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <!-- Position & Resume -->
+                <fieldset class="space-y-6">
+                    <legend class="text-xl font-semibold text-white border-b border-gray-600 pb-2 mb-6">2. Position & Resume</legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label for="position" class="form-label">Applying for Position *</label>
+                            <select name="position" required class="form-select">
+                                <option value="" selected disabled>Select a position</option>
+                                <option value="Software Developer">Software Developer</option>
+                                <option value="Data Analyst">Data Analyst</option>
+                                <option value="AI/ML Engineer">AI/ML Engineer</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Resume / CV *</label>
+                            <input type="file" name="resume" required class="form-file-input">
+                            <p class="text-xs text-gray-400 mt-1">PDF, DOC, DOCX. Max 5MB.</p>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Educational Qualifications -->
+                <fieldset class="space-y-6">
+                    <legend class="text-xl font-semibold text-white border-b border-gray-600 pb-2 mb-6">3. Educational Qualifications</legend>
+                    <div class="space-y-6">
+                        <!-- 10th Standard -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-end">
+                             <div>
+                                <label for="tenth_percentage" class="form-label">10th Percentage / CGPA</label>
+                                <input type="number" step="0.01" name="tenth_percentage" class="form-input" placeholder="e.g., 95.5 or 9.5">
+                            </div>
+                            <div>
+                                <label class="form-label">10th Marksheet</label>
+                                <input type="file" name="tenth_cert" class="form-file-input">
+                            </div>
+                        </div>
+                        <!-- 12th Standard -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-end">
+                            <div>
+                                <label for="twelfth_percentage" class="form-label">12th Percentage / CGPA</label>
+                                <input type="number" step="0.01" name="twelfth_percentage" class="form-input" placeholder="e.g., 92.0 or 9.2">
+                            </div>
+                            <div>
+                                <label class="form-label">12th Marksheet</label>
+                                <input type="file" name="twelfth_cert" class="form-file-input">
+                            </div>
+                        </div>
+                        <!-- Under-Graduate -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-end">
+                            <div>
+                                <label for="ug_university" class="form-label">UG University / College</label>
+                                <input type="text" name="ug_university" class="form-input" placeholder="e.g., Anna University">
+                            </div>
+                             <div>
+                                <label for="ug_percentage" class="form-label">UG Percentage / CGPA</label>
+                                <input type="number" step="0.01" name="ug_percentage" class="form-input" placeholder="e.g., 85.0 or 8.5">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                             <label class="form-label">UG Certificate / Marksheets</label>
+                             <input type="file" name="ug_cert" class="form-file-input">
+                        </div>
+                         <!-- Post-Graduate (Optional) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-end">
+                            <div>
+                                <label for="pg_university" class="form-label">PG University / College (if applicable)</label>
+                                <input type="text" name="pg_university" class="form-input" placeholder="e.g., IIT Madras">
+                            </div>
+                             <div>
+                                <label for="pg_percentage" class="form-label">PG Percentage / CGPA</label>
+                                <input type="number" step="0.01" name="pg_percentage" class="form-input" placeholder="e.g., 88.0 or 8.8">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                             <label class="form-label">PG Certificate / Marksheets</label>
+                             <input type="file" name="pg_cert" class="form-file-input">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Verification & Submission -->
+                <div class="pt-6 border-t border-gray-600 space-y-6">
+                    <div id="jobAppVerificationSection">
+                        <button type="button" id="sendJobAppVerificationBtn" class="w-full sm:w-auto bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-full uppercase tracking-wider transition-colors">Send Verification Code</button>
+                    </div>
+                    
+                    <div id="jobAppOtpSection" class="otp-section text-center p-6 bg-white/5 rounded-lg">
+                         <h5 class="mb-2 font-semibold text-white">Enter Verification Code</h5>
+                         <p class="text-sm text-gray-400 mb-4">A 6-digit code was sent to your email.</p>
+                         <div class="flex justify-center mb-4 gap-2">
+                             <input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1">
+                         </div>
+                         <button type="button" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-full transition-colors" id="verifyJobAppOtpBtn">Verify Code</button>
+                         <div id="jobAppOtpTimer" class="mt-3 text-sm text-center text-gray-400"></div>
+                    </div>
+
+                    <div class="text-center pt-4">
+                        <button id="jobAppSubmitBtn" type="submit" class="bg-brand-blue hover:bg-brand-blue-light text-white font-bold py-3 px-12 rounded-full uppercase tracking-wider transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>Submit Application</button>
+                    </div>
+                    <div class="success-message text-center"><i class="fas fa-check-circle mr-2"></i><span></span></div>
+                    <div class="error-message text-center"><i class="fas fa-exclamation-circle mr-2"></i><span></span></div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    // Initialize form logic specific to this page
+    document.addEventListener('DOMContentLoaded', () => {
+        setupForm(
+            'detailedApplicationForm', 
+            'sendJobAppVerificationBtn', 
+            'verifyJobAppOtpBtn', 
+            'jobAppSubmitBtn', 
+            'jobAppOtpSection', 
+            'jobAppOtpTimer', 
+            'job',
+            '/api/detailed-apply' // The new API endpoint
+        );
+    });
+</script>
+{% endblock %}

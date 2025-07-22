@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block title %}Our Mission & Vision | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <!-- HERO SECTION -->
+    <section class="relative bg-brand-dark py-32 text-white text-center" data-aos="fade-in">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1521790797524-b24948834544?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-30" alt="Compass showing direction">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
+        </div>
+        <div class="relative z-10 container mx-auto px-4">
+            <p class="text-base font-semibold text-blue-400 uppercase tracking-wider">Our Guiding Principles</p>
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mt-2">Our Mission & Vision</h1>
+            <p class="mt-6 max-w-3xl mx-auto text-lg text-gray-300">The core beliefs that drive our every decision, fuel our innovation, and define our commitment to our clients and the global community.</p>
+        </div>
+    </section>
+
+    <!-- MISSION SECTION -->
+    <section id="mission" class="py-24 bg-white dark:bg-brand-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div data-aos="fade-right" class="rounded-lg overflow-hidden shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" alt="Team working on a mission" class="w-full h-auto">
+                </div>
+                <div data-aos="fade-left">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bullseye text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Our Mission</h2>
+                    </div>
+                    <p class="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        To deliver exceptional, human-centric technology solutions that solve complex business challenges, drive sustainable growth for our clients, and create a positive impact on society. We are committed to fostering a culture of relentless innovation, unparalleled quality, and unwavering integrity.
+                    </p>
+                    <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        At our core, we aim to empower the next generation of women in technology, providing a platform where talent is nurtured, leadership is encouraged, and every voice contributes to our collective success.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- VISION SECTION -->
+    <section id="vision" class="py-24 bg-brand-gray dark:bg-gray-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div data-aos="fade-right" class="order-2 md:order-1">
+                     <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-eye text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Our Vision</h2>
+                    </div>
+                    <p class="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        To be a globally recognized leader in technology and a symbol of empowerment, known for our engineering excellence, our ethical and transparent practices, and our instrumental role in building a more inclusive and equitable digital future for all.
+                    </p>
+                     <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        We envision a world where technology is a force for good, bridging gaps and creating opportunities. We strive to be at the forefront of this change, pioneering solutions that are not only intelligent and efficient but also responsible and sustainable.
+                    </p>
+                </div>
+                <div data-aos="fade-left" class="order-1 md:order-2 rounded-lg overflow-hidden shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=2231&auto=format&fit=crop" alt="Developer looking at a bright screen" class="w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Announcements | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="bg-brand-blue text-white py-32" data-aos="fade-in">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight">News & Announcements</h1>
+            <p class="mt-6 max-w-3xl mx-auto text-lg text-blue-200">Stay up to date with the latest news, awards, and partnerships from Vendhan Info Tech.</p>
+        </div>
+    </section>
+
+    <section class="py-24 bg-brand-gray dark:bg-gray-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+            <!-- Awards Section -->
+            <div id="awards" class="mb-16">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl border-b-2 border-brand-blue pb-2">Awards & Recognition</h2>
+                <div class="mt-8 space-y-8">
+                    <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md" data-aos="fade-up">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">December 15, 2024 | <span class="font-bold uppercase text-brand-blue">Award</span></p>
+                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">Honored with the "Women-Led Innovation" Award 2024</h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300">We are incredibly proud to announce that Vendhan Info Tech has been awarded the prestigious 'Women in Tech 2024' award for our groundbreaking work in AI-driven logistics solutions. This award is a testament to our team's dedication and our commitment to fostering female leadership in the technology industry.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partnerships Section -->
+            <div id="partnerships" class="mb-16">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl border-b-2 border-brand-blue pb-2">Strategic Partnerships</h2>
+                <div class="mt-8 space-y-8">
+                    <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md" data-aos="fade-up">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">October 20, 2024 | <span class="font-bold uppercase text-green-500">Partnership</span></p>
+                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">New Partnership with CloudLeap to Accelerate Digital Transformation</h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300">Vendhan Info Tech is excited to announce a new strategic partnership with CloudLeap, a leading global cloud infrastructure provider. This collaboration will combine our deep expertise in custom software and AI with CloudLeap's robust and scalable cloud services, enabling us to deliver unparalleled digital transformation solutions for enterprises across key sectors like finance and healthcare.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

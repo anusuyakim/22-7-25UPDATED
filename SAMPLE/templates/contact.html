@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}Contact Us | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="relative bg-black text-white py-24 sm:py-32 min-h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1596524430615-b46475ddff6e?q=80&w=2070&auto=format&fit=crop');">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+        <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 max-w-xl text-center" data-aos="fade-in">
+            <h1 class="text-4xl md:text-5xl font-light text-white">Get In Touch</h1>
+            <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">Have a project in mind, a question about our services, or just want to say hello? We'd love to hear from you.</p>
+
+            <form id="contactForm" class="mt-12 text-left space-y-8">
+                <input type="hidden" name="verification_token">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label for="firstName" class="form-label">First Name *</label>
+                        <input type="text" name="firstName" required class="form-input" placeholder="Your first name">
+                    </div>
+                    <div>
+                        <label for="lastName" class="form-label">Last Name *</label>
+                        <input type="text" name="lastName" required class="form-input" placeholder="Your last name">
+                    </div>
+                </div>
+                <div>
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" name="email" required class="form-input" placeholder="you@example.com">
+                </div>
+                <div>
+                    <label for="message" class="form-label">Message *</label>
+                    <textarea name="message" rows="5" required class="form-input" placeholder="Tell us about your project or inquiry..."></textarea>
+                </div>
+                
+                <div class="pt-4 space-y-6">
+                    <div id="contactVerificationSection">
+                        <button type="button" id="sendContactVerificationBtn" class="w-full sm:w-auto bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-full uppercase tracking-wider transition-colors">Verify Email to Send</button>
+                    </div>
+
+                    <div id="contactOtpSection" class="otp-section text-center p-6 bg-white/5 rounded-lg">
+                        <h5 class="mb-2 font-semibold text-white">Enter Verification Code</h5>
+                        <p class="text-sm text-gray-400 mb-4">A 6-digit code was sent to your email.</p>
+                        <div class="flex justify-center mb-4 gap-2">
+                            <input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1"><input type="text" class="otp-input" maxlength="1">
+                        </div>
+                        <button type="button" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-full transition-colors" id="verifyContactOtpBtn">Verify Code</button>
+                        <div id="contactOtpTimer" class="mt-3 text-sm text-center text-gray-400"></div>
+                    </div>
+                    
+                    <div class="text-center pt-4">
+                        <button id="contactSubmitBtn" type="submit" class="bg-brand-blue hover:bg-brand-blue-light text-white font-bold py-3 px-12 rounded-full uppercase tracking-wider transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>Send Message</button>
+                    </div>
+                    <div class="success-message text-center"><i class="fas fa-check-circle mr-2"></i><span></span></div>
+                    <div class="error-message text-center"><i class="fas fa-exclamation-circle mr-2"></i><span></span></div>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        setupForm('contactForm', 'sendContactVerificationBtn', 'verifyContactOtpBtn', 'contactSubmitBtn', 'contactOtpSection', 'contactOtpTimer', 'contact', '/api/contact');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block title %}About Us | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="relative bg-brand-dark py-32 text-white text-center" data-aos="fade-in">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop" class="w-full h-full object-cover opacity-30" alt="Our Team">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent"></div>
+        </div>
+        <div class="relative z-10 container mx-auto px-4">
+            <p class="text-base font-semibold text-blue-400 uppercase tracking-wider">Our Story</p>
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mt-2">Engineering the Future, <br class="hidden sm:block">Led by Vision</h1>
+            <p class="mt-6 max-w-3xl mx-auto text-lg text-gray-300">Discover the values, vision, and people that make Vendhan Info Tech a beacon of innovation and empowerment in the technology sector.</p>
+        </div>
+    </section>
+
+    <section id="journey" class="py-24 bg-brand-gray dark:bg-gray-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div data-aos="fade-right">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Our Journey</h2>
+                    <p class="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        Founded in 2020, Vendhan Info Tech was born from a simple yet powerful idea: to build a technology company where innovation, excellence, and inclusivity are not just ideals, but the very fabric of our operations. As a proud women-led enterprise, we set out to challenge the status quo, proving that a diverse team is a strong team.
+                    </p>
+                    <p class="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        From our humble beginnings in Dindigul, we have grown into a dynamic force, delivering cutting-edge solutions to clients across the globe. Our journey is one of relentless learning, strategic growth, and an unwavering commitment to our clients' success.
+                    </p>
+                </div>
+                <div data-aos="fade-left" class="rounded-lg overflow-hidden shadow-2xl">
+                     <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="Team collaborating on a project" class="w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="mission" class="py-24 bg-white dark:bg-brand-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12">
+            <div data-aos="fade-up">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-bullseye text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Our Mission</h3>
+                </div>
+                <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+                    To deliver exceptional, human-centric technology solutions that solve complex business challenges, drive sustainable growth for our clients, and create a positive impact on society. We are committed to fostering a culture of innovation and empowering the next generation of women in technology.
+                </p>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="100">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-eye text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Our Vision</h3>
+                </div>
+                <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+                    To be a globally recognized leader in technology and a symbol of empowerment, known for our engineering excellence, ethical practices, and our role in building a more inclusive and equitable digital future for all.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="leadership" class="py-24 bg-brand-gray dark:bg-gray-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center" data-aos="fade-up">
+                <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">The Minds Behind the Mission</p>
+                <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Meet Our Leadership</h2>
+            </div>
+            <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-12 max-w-3xl mx-auto">
+                <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">Renugadevi</h3>
+                    <p class="mt-1 text-brand-blue dark:text-blue-400 font-medium">Founder & CEO</p>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">The visionary force behind Vendhan Info Tech, Renugadevi's passion for technology and empowerment drives our company's culture and strategic direction.</p>
+                </div>
+                <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">Ramprabhu</h3>
+                    <p class="mt-1 text-brand-blue dark:text-blue-400 font-medium">Chief Technology Officer</p>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">With deep expertise in cloud architecture and AI, Ramprabhu leads our engineering teams to build robust, scalable, and future-ready solutions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

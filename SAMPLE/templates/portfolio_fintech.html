@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}Portfolio: Secure Fintech Application | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="bg-brand-gray dark:bg-gray-900 py-24" data-aos="fade-in">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">Case Study</p>
+                <h1 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">Secure Mobile Banking Application</h1>
+                <p class="mt-6 text-xl text-gray-600 dark:text-gray-300 leading-relaxed">Developing a next-generation, user-friendly mobile banking app with a security-first architecture for a challenger bank.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 -mt-12" data-aos="fade-up">
+        <div class="rounded-xl overflow-hidden shadow-2xl"><img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop" alt="Fintech App" class="w-full h-auto"></div>
+    </div>
+    
+    <section class="py-24 bg-white dark:bg-brand-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-12">
+                <div class="md:col-span-2 space-y-12">
+                    <div data-aos="fade-up">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">The Challenge</h2>
+                        <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">A new digital-first bank needed to launch a mobile application that was not only intuitive and feature-rich but also impenetrably secure. They needed to build customer trust from day one by ensuring the highest levels of data protection, fraud prevention, and compliance with financial regulations like PCI-DSS, all while offering a seamless user experience.</p>
+                    </div>
+                    <div data-aos="fade-up">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Our Solution</h2>
+                        <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">We adopted a "secure-by-design" methodology throughout the entire development lifecycle. We developed native applications for both iOS (Swift) and Android (Kotlin) to maximize performance and security. The backend was built on a microservices architecture to isolate functions and minimize the attack surface.</p>
+                        <ul class="mt-4 space-y-2 list-disc list-inside text-gray-600 dark:text-gray-300">
+                            <li>Integrated multi-factor authentication (MFA) and biometric login.</li>
+                            <li>Implemented end-to-end encryption for all data in transit and at rest.</li>
+                            <li>Conducted rigorous, continuous penetration testing and code reviews.</li>
+                            <li>Designed a clean, intuitive UI/UX that simplified complex banking transactions.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:col-span-1" data-aos="fade-left">
+                    <div class="bg-brand-gray dark:bg-gray-900 rounded-lg p-6 sticky top-28">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Key Outcomes</h3>
+                        <div class="mt-6 space-y-6">
+                            <div><p class="text-3xl font-bold text-brand-blue dark:text-blue-400">Zero</p><p class="mt-1 text-gray-600 dark:text-gray-400">Security breaches reported since launch.</p></div>
+                            <div><p class="text-3xl font-bold text-brand-blue dark:text-blue-400">4.8 <i class="fas fa-star text-yellow-400"></i></p><p class="mt-1 text-gray-600 dark:text-gray-400">Average user rating on app stores.</p></div>
+                            <div><p class="text-3xl font-bold text-brand-blue dark:text-blue-400">50%</p><p class="mt-1 text-gray-600 dark:text-gray-400">Faster transaction times than previous web portal.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

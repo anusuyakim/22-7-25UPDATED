@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Our Services | Vendhan Info Tech{% endblock %}
+
+{% block content %}
+<div class="pt-20"> <!-- Header offset -->
+    <section class="bg-brand-blue dark:bg-brand-blue text-white py-32" data-aos="fade-in">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight">Our Technology Services</h1>
+            <p class="mt-6 max-w-3xl mx-auto text-lg text-blue-200">We architect, build, and manage bespoke technology solutions that drive tangible business outcomes, ensure top-tier security, and deliver an unparalleled user experience.</p>
+        </div>
+    </section>
+
+    <section class="py-24 bg-brand-gray dark:bg-gray-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-brand-dark rounded-xl shadow-lg p-8 flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300" data-aos="fade-up">
+                    <div class="flex-shrink-0 w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-full flex items-center justify-center"><i class="fas fa-brain text-3xl"></i></div>
+                    <h3 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">AI & Machine Learning</h3>
+                    <p class="mt-3 text-gray-600 dark:text-gray-300 flex-grow">Unlock predictive insights and intelligent automation. We build custom AI models and data pipelines to transform your operational efficiency and decision-making.</p>
+                    <a href="{{ url_for('services_ai') }}" class="mt-6 font-semibold text-brand-blue dark:text-blue-400 hover:underline">Learn More →</a>
+                </div>
+                <div class="bg-white dark:bg-brand-dark rounded-xl shadow-lg p-8 flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex-shrink-0 w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-full flex items-center justify-center"><i class="fas fa-cloud-arrow-up text-3xl"></i></div>
+                    <h3 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">Digital Transformation</h3>
+                    <p class="mt-3 text-gray-600 dark:text-gray-300 flex-grow">Modernize your infrastructure and processes. We guide your transition to the cloud, optimize workflows, and implement scalable digital ecosystems for a competitive edge.</p>
+                    <a href="{{ url_for('services_digital') }}" class="mt-6 font-semibold text-brand-blue dark:text-blue-400 hover:underline">Learn More →</a>
+                </div>
+                <div class="bg-white dark:bg-brand-dark rounded-xl shadow-lg p-8 flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex-shrink-0 w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-full flex items-center justify-center"><i class="fas fa-code text-3xl"></i></div>
+                    <h3 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">Custom Software Development</h3>
+                    <p class="mt-3 text-gray-600 dark:text-gray-300 flex-grow">From sophisticated web applications to intuitive mobile apps, our developers craft high-performance, secure, and scalable software tailored to your unique requirements.</p>
+                    <a href="{{ url_for('services_software') }}" class="mt-6 font-semibold text-brand-blue dark:text-blue-400 hover:underline">Learn More →</a>
+                </div>
+                <div class="bg-white dark:bg-brand-dark rounded-xl shadow-lg p-8 flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex-shrink-0 w-16 h-16 bg-brand-blue/10 text-brand-blue dark:bg-blue-400/10 dark:text-blue-400 rounded-full flex items-center justify-center"><i class="fas fa-shield-halved text-3xl"></i></div>
+                    <h3 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">Data & Cybersecurity</h3>
+                    <p class="mt-3 text-gray-600 dark:text-gray-300 flex-grow">Protect your most valuable assets. We offer comprehensive security audits, threat mitigation strategies, and data governance frameworks to ensure your digital resilience.</p>
+                    <a href="{{ url_for('services_cybersecurity') }}" class="mt-6 font-semibold text-brand-blue dark:text-blue-400 hover:underline">Learn More →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
