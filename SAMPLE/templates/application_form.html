@@ -155,7 +155,6 @@
 
 {% block page_scripts %}
 <script>
-    // Initialize form logic specific to this page
     document.addEventListener('DOMContentLoaded', () => {
         setupForm(
             'detailedApplicationForm', 
@@ -165,7 +164,7 @@
             'jobAppOtpSection', 
             'jobAppOtpTimer', 
             'job',
-            '/api/detailed-apply' // The new API endpoint
+            '/api/detailed-apply'
         );
     });
 </script>

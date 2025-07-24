@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        h2 { color: #0082ca; }
+        strong { color: #555; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        td { padding: 8px; border: 1px solid #eee; }
+        td:first-child { font-weight: bold; width: 30%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>New Job Application Received</h2>
+        <p>The following application was submitted via the website. Attached documents are included with this email.</p>
+        <hr>
+        <h3>Applicant Details</h3>
+        <table>
+            <tr><td>Applying For:</td><td>{{ data.position }}</td></tr>
+            <tr><td>First Name:</td><td>{{ data.firstName }}</td></tr>
+            <tr><td>Last Name:</td><td>{{ data.lastName }}</td></tr>
+            <tr><td>Email:</td><td>{{ data.email }}</td></tr>
+            <tr><td>Phone:</td><td>{{ data.phoneNumber }}</td></tr>
+            <tr><td>Location:</td><td>{{ data.city }}, {{ data.district }}</td></tr>
+        </table>
+
+        <h3>Educational Details</h3>
+         <table>
+            <tr><td>10th %/CGPA:</td><td>{{ data.tenth_percentage or 'N/A' }}</td></tr>
+            <tr><td>12th %/CGPA:</td><td>{{ data.twelfth_percentage or 'N/A' }}</td></tr>
+            <tr><td>UG University:</td><td>{{ data.ug_university or 'N/A' }}</td></tr>
+            <tr><td>UG %/CGPA:</td><td>{{ data.ug_percentage or 'N/A' }}</td></tr>
+            <tr><td>PG University:</td><td>{{ data.pg_university or 'N/A' }}</td></tr>
+            <tr><td>PG %/CGPA:</td><td>{{ data.pg_percentage or 'N/A' }}</td></tr>
+        </table>
+    </div>
+</body>
+</html>

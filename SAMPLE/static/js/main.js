@@ -1,4 +1,5 @@
-// UNIFIED SCRIPT BLOCK
+// UNIFIED AND CORRECTED main.js
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Loading Overlay ---
@@ -10,7 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- AOS Init ---
-    AOS.init({ duration: 800, once: true, offset: 50 });
+    if (typeof AOS !== 'undefined') {
+        AOS.init({ duration: 800, once: true, offset: 50 });
+    }
 
     // --- ICONS ---
     const icons = {
@@ -130,9 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(portfolioScrollContainer) {
         const portfolioItems = [
           { image: 'https://images.unsplash.com/photo-1554744512-d6c603f27c54?q=80&w=2070&auto=format&fit=crop', title: 'AI-Powered Logistics Platform', linkHref: '/portfolio/ai-logistics-platform' },
-          { image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop', title: 'Cloud Migration Strategy', linkHref: '/portfolio/cloud-migration-strategy' },
-          { image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop', title: 'Secure Fintech Application', linkHref: '/portfolio/secure-fintech-application' },
-          { image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', title: 'Enterprise ERP Implementation', linkHref: '/portfolio/enterprise-erp-implementation' },
+          { image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop', title: 'Cloud Migration Strategy', linkHref: '/portfolio/cloud-migration' },
+          { image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop', title: 'Secure Fintech Application', linkHref: '/portfolio/secure-fintech-app' },
+          { image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', title: 'Enterprise ERP Implementation', linkHref: '/portfolio/enterprise-erp' },
         ];
         portfolioItems.forEach(item => {
             portfolioScrollContainer.innerHTML += `<div class="flex-shrink-0 w-[90%] sm:w-1/2 md:w-1/3 lg:w-1/4 snap-start"><div class="relative group rounded-lg overflow-hidden h-[60vh] shadow-lg"><img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" /><div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div><div class="absolute bottom-0 left-0 p-6 text-white"><h3 class="text-3xl font-light">${item.title}</h3><a href="${item.linkHref}" class="mt-2 inline-block text-lg font-medium border-b-2 border-transparent hover:border-white transition-all duration-300">Explore</a></div></div></div>`;
@@ -151,25 +154,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href*="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetHref = this.getAttribute('href');
-            // Check if it's an anchor link intended for scrolling
-            if (targetHref.startsWith('#') || targetHref.startsWith('/#')) {
+            if (targetHref.startsWith('#') || (targetHref.startsWith('/#') && window.location.pathname === '/')) {
                 const hash = this.hash;
                 const targetElement = document.querySelector(hash);
-
-                // If the target element is on the current page, scroll to it
                 if (targetElement) {
                     e.preventDefault();
-                    const headerOffset = 80; // Height of the fixed header
+                    const headerOffset = 80;
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
-                    });
-                } 
-                // If it's a cross-page link to an anchor (e.g., from /about to /#services)
-                // the browser's default behavior is what we want, so we don't prevent it.
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
             }
         });
     });
@@ -230,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         
         try {
-            const response = await fetch('/api/chat', {
+            const response = await fetch('/api/chatbot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userMessage }),
@@ -254,166 +248,159 @@ document.addEventListener('DOMContentLoaded', () => {
              toggleChatbot(false);
         }
     });
-});
 
+    // --- UNIFIED FORM HANDLING LOGIC ---
+    window.setupForm = (formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, timerId, formType, submitUrl) => {
+        const form = document.getElementById(formId);
+        if (!form) return;
 
-// --- FORM HANDLING (OTP Logic) ---
-function showMessage(formElement, message, isSuccess) {
-    const successEl = formElement.querySelector('.success-message');
-    const errorEl = formElement.querySelector('.error-message');
-    if (!successEl || !errorEl) return;
-    const targetEl = isSuccess ? successEl : errorEl;
-    const otherEl = isSuccess ? errorEl : successEl;
-    otherEl.style.display = 'none';
-    targetEl.querySelector('span').textContent = message;
-    targetEl.style.display = 'block';
-    setTimeout(() => { targetEl.style.display = 'none'; }, 8000);
-}
-
-function setupOtpInputs(container) {
-    const inputs = container.querySelectorAll('.otp-input');
-    inputs.forEach((input, index) => {
-        input.addEventListener('input', () => { if (input.value.length === 1 && index < inputs.length - 1) inputs[index + 1].focus(); });
-        input.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && input.value === '' && index > 0) inputs[index - 1].focus(); });
-    });
-}
-
-function startOtpTimer(timerEl, verifyBtn) {
-    clearInterval(timerEl.timerInterval);
-    let timeLeft = 300; // 5 minutes
-    timerEl.style.display = 'block';
-    verifyBtn.disabled = false;
-    timerEl.timerInterval = setInterval(() => {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerEl.textContent = `Code expires in ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        if (timeLeft-- <= 0) {
-            clearInterval(timerEl.timerInterval);
-            timerEl.textContent = 'Code expired. Please request a new one.';
-            if(verifyBtn) verifyBtn.disabled = true;
-        }
-    }, 1000);
-}
-
-async function handleSendOtp(formEl, emailInput, sendBtn, otpSection, timerEl, verifyBtn) {
-    if (!emailInput.value.trim() || !emailInput.checkValidity()) { 
-        showMessage(formEl, 'Please enter a valid email address.', false); 
-        emailInput.focus();
-        return; 
-    }
-    sendBtn.disabled = true; 
-    sendBtn.textContent = 'Sending...';
-    try {
-        const response = await fetch('/api/send-otp', { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ email: emailInput.value }) 
-        });
-        const data = await response.json();
-        showMessage(formEl, data.message, response.ok);
-        if (response.ok) {
-            otpSection.style.display = 'block';
-            otpSection.querySelector('.otp-input').focus();
-            if (verifyBtn) verifyBtn.disabled = false;
-            startOtpTimer(timerEl, verifyBtn);
-        }
-    } catch (error) { 
-        console.error("Send OTP Error:", error);
-        showMessage(formEl, 'Network error. Please check your connection and try again.', false); 
-    } finally { 
-        sendBtn.disabled = false; 
-        sendBtn.textContent = sendBtn.id.includes('Job') ? 'Send Verification Code' : 'Verify Email to Send';
-    }
-}
-
-async function handleVerifyOtp(formEl, emailInput, otpInputs, verifyBtn, timerEl, tokenInput, submitBtn, formType) {
-    const otp = Array.from(otpInputs).map(input => input.value).join('');
-    if (otp.length !== 6) { 
-        showMessage(formEl, 'Please enter the complete 6-digit code.', false); 
-        return; 
-    }
-    verifyBtn.disabled = true; 
-    verifyBtn.textContent = 'Verifying...';
-    try {
-        const response = await fetch('/api/verify-otp', { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ email: emailInput.value, otp: otp, form_type: formType })
-        });
-        const data = await response.json();
-        if (response.ok && data.verified) {
-            showMessage(formEl, 'Email verified successfully! You can now submit.', true);
-            tokenInput.value = data.token;
-            submitBtn.disabled = false;
-            clearInterval(timerEl.timerInterval);
-            timerEl.style.display = 'none';
-            verifyBtn.closest('.otp-section').style.display = 'none';
-            const sendCodeBtnParent = document.getElementById(formType === 'job' ? 'jobAppVerificationSection' : 'contactVerificationSection');
-            if (sendCodeBtnParent) sendCodeBtnParent.style.display = 'none';
-        } else {
-            showMessage(formEl, data.message || 'Invalid code.', false);
-            otpInputs.forEach(input => input.value = ''); 
-            otpInputs[0].focus();
-        }
-    } catch (error) { 
-        console.error("Verify OTP Error:", error);
-        showMessage(formEl, 'Network error. Please try again.', false); 
-    } finally { 
-        verifyBtn.disabled = false; 
-        verifyBtn.textContent = 'Verify Code'; 
-    }
-}
-
-function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, otpTimerId, formType, apiEndpoint) {
-    const form = document.getElementById(formId);
-    if (!form) return;
-
-    const sendBtn = document.getElementById(sendBtnId);
-    const verifyBtn = document.getElementById(verifyBtnId);
-    const submitBtn = document.getElementById(submitBtnId);
-    const otpSection = document.getElementById(otpSectionId);
-    const otpInputs = otpSection.querySelectorAll('.otp-input');
-    const emailInput = form.querySelector('input[name="email"]');
-    const otpTimerEl = document.getElementById(otpTimerId);
-    const tokenInput = form.querySelector('input[name="verification_token"]');
-    
-    setupOtpInputs(otpSection);
-    if(sendBtn) sendBtn.addEventListener('click', () => handleSendOtp(form, emailInput, sendBtn, otpSection, otpTimerEl, verifyBtn));
-    if(verifyBtn) verifyBtn.addEventListener('click', () => handleVerifyOtp(form, emailInput, otpInputs, verifyBtn, otpTimerEl, tokenInput, submitBtn, formType));
-    
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        if (submitBtn.disabled) {
-             showMessage(this, 'Please verify your email before submitting.', false);
-             return;
-        }
-
-        submitBtn.disabled = true; 
-        const originalSubmitText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<span class="animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full inline-block mr-2"></span>Submitting...';
+        const sendVerificationBtn = document.getElementById(sendBtnId);
+        const verifyOtpBtn = document.getElementById(verifyBtnId);
+        const submitBtn = document.getElementById(submitBtnId);
+        const otpSection = document.getElementById(otpSectionId);
+        const otpTimer = document.getElementById(timerId);
+        const otpInputs = otpSection ? otpSection.querySelectorAll('.otp-input') : [];
+        const emailInput = form.querySelector('input[name="email"]');
         
-        try {
-            const formData = new FormData(this);
-            const response = await fetch(apiEndpoint, { 
-                method: 'POST', 
-                body: formData 
-            });
-            const data = await response.json();
-            showMessage(this, data.message, response.ok);
-            if (response.ok) { 
-                this.reset(); 
-                submitBtn.disabled = true;
-                const sendCodeBtnParent = document.getElementById(formType === 'job' ? 'jobAppVerificationSection' : 'contactVerificationSection');
-                if (sendCodeBtnParent) sendCodeBtnParent.style.display = 'block';
-            } else { 
-                submitBtn.disabled = false; 
+        let countdown;
+
+        const showFormMessage = (type, message) => {
+            const successMsg = form.querySelector('.success-message');
+            const errorMsg = form.querySelector('.error-message');
+            if (successMsg) successMsg.style.display = 'none';
+            if (errorMsg) errorMsg.style.display = 'none';
+
+            if (type === 'success' && successMsg) {
+                successMsg.style.display = 'block';
+                successMsg.querySelector('span').textContent = message;
+            } else if (type === 'error' && errorMsg) {
+                errorMsg.style.display = 'block';
+                errorMsg.querySelector('span').textContent = message;
             }
-        } catch (error) {
-            console.error("Form Submission Error:", error);
-            showMessage(this, 'A network error occurred. Could not submit the form.', false);
-            submitBtn.disabled = false;
-        } finally {
-            submitBtn.innerHTML = originalSubmitText;
+        };
+
+        const startTimer = () => {
+            if (!otpTimer) return;
+            let duration = 300; // 5 minutes
+            clearInterval(countdown);
+            otpTimer.style.display = 'block';
+            countdown = setInterval(() => {
+                const minutes = Math.floor(duration / 60);
+                const seconds = duration % 60;
+                otpTimer.textContent = `Code expires in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (--duration < 0) {
+                    clearInterval(countdown);
+                    otpTimer.textContent = 'Code expired. Please request a new one.';
+                    if(verifyOtpBtn) verifyOtpBtn.disabled = true;
+                }
+            }, 1000);
+        };
+
+        if (sendVerificationBtn) {
+            sendVerificationBtn.addEventListener('click', async () => {
+                if (!emailInput.value || !emailInput.checkValidity()) {
+                    showFormMessage('error', 'Please enter a valid email address.');
+                    return;
+                }
+                sendVerificationBtn.disabled = true;
+                sendVerificationBtn.textContent = 'SENDING...';
+                try {
+                    const response = await fetch('/api/send-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: emailInput.value })
+                    });
+                    const data = await response.json();
+                    showFormMessage(response.ok ? 'success' : 'error', data.message || data.error);
+                    if (response.ok) {
+                        if(otpSection) otpSection.style.display = 'block';
+                        startTimer();
+                    }
+                } catch (error) {
+                    console.error('Send OTP Error:', error);
+                    showFormMessage('error', 'Failed to connect. Please check your connection.');
+                } finally {
+                    sendVerificationBtn.disabled = false;
+                    sendVerificationBtn.textContent = sendBtnId.includes('Contact') ? 'Verify Email to Send' : 'Send Verification Code';
+                }
+            });
         }
-    });
-}
+        
+        if (verifyOtpBtn) {
+            verifyOtpBtn.addEventListener('click', async () => {
+                const otp = Array.from(otpInputs).map(input => input.value).join('');
+                if (otp.length !== 6) {
+                    showFormMessage('error', 'Please enter the full 6-digit code.');
+                    return;
+                }
+                try {
+                    const response = await fetch('/api/verify-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: emailInput.value, otp: otp })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        showFormMessage('error', data.error);
+                    } else {
+                        showFormMessage('success', data.message);
+                        otpSection.style.display = 'none';
+                        submitBtn.disabled = false;
+                        clearInterval(countdown);
+                    }
+                } catch (error) {
+                    console.error('Verify OTP Error:', error);
+                    showFormMessage('error', 'Failed to connect to the server.');
+                }
+            });
+        }
+        
+        if (otpInputs.length > 0) {
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('keyup', (e) => {
+                    const key = e.key;
+                    if (key >= 0 && key <= 9) {
+                        input.value = key;
+                        if (index < otpInputs.length - 1) otpInputs[index + 1].focus();
+                    } else if (key === 'Backspace') {
+                        if (index > 0) otpInputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (submitBtn.disabled) {
+                    showFormMessage('error', 'Please verify your email before submitting.');
+                    return;
+                }
+                const originalSubmitText = submitBtn.textContent;
+                submitBtn.innerHTML = '<span class="animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full inline-block mr-2"></span>Submitting...';
+                submitBtn.disabled = true;
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(submitUrl, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    showFormMessage(response.ok ? 'success' : 'error', data.message || data.error);
+                    if (response.ok) {
+                        form.reset();
+                        submitBtn.disabled = true;
+                    } else {
+                        submitBtn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Form Submission Error:', error);
+                    showFormMessage('error', 'An error occurred during submission.');
+                    submitBtn.disabled = false;
+                } finally {
+                    submitBtn.innerHTML = originalSubmitText;
+                }
+            });
+        }
+    };
+});

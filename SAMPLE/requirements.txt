@@ -1,8 +1,14 @@
 Flask
 Flask-SQLAlchemy
+Flask-Migrate
 Flask-Mail
 Flask-Cors
+Flask-Login
+Flask-Bcrypt
+Flask-Admin
+Flask-WTF
 python-dotenv
+google-generativeai
 itsdangerous
 werkzeug
-google-generativeai
+gunicorn
