@@ -77,22 +77,20 @@
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl mt-2">Recent Highlights & Updates</h2>
         </div>
         <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
-                <p class="text-sm text-blue-200">December 15, 2024 | <span class="font-bold uppercase">Award</span></p>
-                <h3 class="mt-2 text-lg font-semibold text-white">Women-Led Innovation Award</h3>
-                <p class="mt-2 text-sm text-blue-200 flex-grow">We are honored to receive the 'Women in Tech 2024' award for our groundbreaking work in AI-driven solutions.</p>
-            </div>
-            <div class="bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
-                <p class="text-sm text-blue-200">November 01, 2024 | <span class="font-bold uppercase">Vacancy</span></p>
-                <h3 class="mt-2 text-lg font-semibold text-white">Now Hiring: Senior AI/ML Engineer</h3>
-                <p class="mt-2 text-sm text-blue-200 flex-grow">Passionate about building the future? We are looking for an experienced AI/ML engineer to join our growing team.</p>
-                <a href="{{ url_for('application_form') }}" class="mt-4 self-start bg-white text-brand-blue font-bold py-2 px-4 rounded-full text-sm hover:bg-blue-100 transition-colors">Apply Now</a>
-            </div>
-             <div class="bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
-                <p class="text-sm text-blue-200">October 20, 2024 | <span class="font-bold uppercase">Partnership</span></p>
-                <h3 class="mt-2 text-lg font-semibold text-white">New Strategic Partnership</h3>
-                <p class="mt-2 text-sm text-blue-200 flex-grow">We've partnered with a leading cloud provider to accelerate digital transformation for enterprises across key sectors.</p>
-            </div>
+            {% if announcements %}
+                {% for item in announcements %}
+                <div class="bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                    <p class="text-sm text-blue-200">{{ item.date.strftime('%B %d, %Y') }} | <span class="font-bold uppercase">{{ item.category }}</span></p>
+                    <h3 class="mt-2 text-lg font-semibold text-white">{{ item.title }}</h3>
+                    <p class="mt-2 text-sm text-blue-200 flex-grow">{{ item.content }}</p>
+                    {% if item.category == 'Vacancy' %}
+                    <a href="{{ url_for('application_form') }}" class="mt-4 self-start bg-white text-brand-blue font-bold py-2 px-4 rounded-full text-sm hover:bg-blue-100 transition-colors">Apply Now</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-span-full text-center text-blue-200">No recent announcements.</div>
+            {% endif %}
         </div>
         <div class="text-center mt-12" data-aos="fade-up">
             <a href="{{ url_for('announcements_page') }}" class="text-white font-semibold hover:underline">View all announcements →</a>

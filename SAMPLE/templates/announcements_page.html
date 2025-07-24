@@ -16,11 +16,15 @@
             <div id="awards" class="mb-16">
                 <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl border-b-2 border-brand-blue pb-2">Awards & Recognition</h2>
                 <div class="mt-8 space-y-8">
+                    {% for item in awards %}
                     <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md" data-aos="fade-up">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">December 15, 2024 | <span class="font-bold uppercase text-brand-blue">Award</span></p>
-                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">Honored with the "Women-Led Innovation" Award 2024</h3>
-                        <p class="mt-2 text-gray-600 dark:text-gray-300">We are incredibly proud to announce that Vendhan Info Tech has been awarded the prestigious 'Women in Tech 2024' award for our groundbreaking work in AI-driven logistics solutions. This award is a testament to our team's dedication and our commitment to fostering female leadership in the technology industry.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ item.date.strftime('%B %d, %Y') }} | <span class="font-bold uppercase text-brand-blue">{{ item.category }}</span></p>
+                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">{{ item.title }}</h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300">{{ item.content }}</p>
                     </div>
+                    {% else %}
+                    <p class="text-gray-600 dark:text-gray-400">No awards to display currently.</p>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -28,11 +32,31 @@
             <div id="partnerships" class="mb-16">
                 <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl border-b-2 border-brand-blue pb-2">Strategic Partnerships</h2>
                 <div class="mt-8 space-y-8">
-                    <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md" data-aos="fade-up">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">October 20, 2024 | <span class="font-bold uppercase text-green-500">Partnership</span></p>
-                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">New Partnership with CloudLeap to Accelerate Digital Transformation</h3>
-                        <p class="mt-2 text-gray-600 dark:text-gray-300">Vendhan Info Tech is excited to announce a new strategic partnership with CloudLeap, a leading global cloud infrastructure provider. This collaboration will combine our deep expertise in custom software and AI with CloudLeap's robust and scalable cloud services, enabling us to deliver unparalleled digital transformation solutions for enterprises across key sectors like finance and healthcare.</p>
+                    {% for item in partnerships %}
+                     <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md" data-aos="fade-up">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ item.date.strftime('%B %d, %Y') }} | <span class="font-bold uppercase text-green-500">{{ item.category }}</span></p>
+                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">{{ item.title }}</h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300">{{ item.content }}</p>
                     </div>
+                    {% else %}
+                    <p class="text-gray-600 dark:text-gray-400">No new partnerships to announce.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Other News Section (Optional) -->
+            <div id="other-news" class="mb-16">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl border-b-2 border-brand-blue pb-2">Other News</h2>
+                <div class="mt-8 space-y-8">
+                    {% for item in other_news %}
+                     <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md" data-aos="fade-up">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ item.date.strftime('%B %d, %Y') }} | <span class="font-bold uppercase text-yellow-500">{{ item.category }}</span></p>
+                        <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">{{ item.title }}</h3>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300">{{ item.content }}</p>
+                    </div>
+                    {% else %}
+                    <p class="text-gray-600 dark:text-gray-400">No other news at this time.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>

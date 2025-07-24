@@ -52,7 +52,7 @@
                         </div>
                     </a>
                     
-                    <!-- DESKTOP NAVIGATION (Unchanged from previous version) -->
+                    <!-- DESKTOP NAVIGATION -->
                     <nav class="hidden lg:flex items-center h-full space-x-8">
                         <div class="h-full flex items-center">
                             <a href="{{ url_for('home') }}" class="main-nav-link no-underline {{ 'nav-active' if current_page == 'home' else '' }}">Home</a>
@@ -97,19 +97,6 @@
                         </div>
                     </nav>
 
-                    <!-- RIGHT-SIDE CONTROLS (Unchanged) -->
-                    <div class="flex items-center space-x-6">
-                        <div class="hidden sm:flex items-center space-x-2 text-sm">
-                            <span>Mode:</span>
-                            <button id="theme-toggle-link" class="font-semibold uppercase tracking-wider"></button>
-                        </div>
-                        <a href="{{ url_for('contact_page') }}" class="main-nav-link hidden sm:block {{ 'nav-active' if current_page == 'contact' else '' }}">Contact</a>
-                        <button id="mobile-menu-toggle" class="lg:hidden p-2" aria-label="Toggle mobile menu"></button>
-                    </div>
-                </div>
-            </div>
-        </header>
-               
                     <!-- RIGHT-SIDE CONTROLS -->
                     <div class="flex items-center space-x-6">
                         <div class="hidden sm:flex items-center space-x-2 text-sm">
@@ -117,7 +104,6 @@
                             <button id="theme-toggle-link" class="font-semibold uppercase tracking-wider"></button>
                         </div>
                         <a href="{{ url_for('contact_page') }}" class="main-nav-link hidden sm:block {{ 'nav-active' if current_page == 'contact' else '' }}">Contact</a>
-                        <!-- Mobile Menu Toggle -->
                         <button id="mobile-menu-toggle" class="lg:hidden p-2" aria-label="Toggle mobile menu"></button>
                     </div>
                 </div>

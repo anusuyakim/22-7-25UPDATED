@@ -47,27 +47,24 @@
                 <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300">Find your place on our team. We are looking for passionate individuals to join us on our mission.</p>
             </div>
             <div class="mt-12 max-w-2xl mx-auto space-y-4">
-                <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Senior AI/ML Engineer</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Remote/On-site • Full-time</p>
+                {% if openings %}
+                    {% for job in openings %}
+                    <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ job.title }}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ job.location_type }} • {{ job.job_type }}</p>
+                            {% if job.description %}
+                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ job.description }}</p>
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('application_form') }}" class="flex-shrink-0 ml-4 bg-brand-blue hover:bg-brand-blue-light text-white font-semibold py-2 px-5 rounded-md text-sm transition-colors">Apply</a>
                     </div>
-                    <a href="{{ url_for('application_form') }}" class="bg-brand-blue hover:bg-brand-blue-light text-white font-semibold py-2 px-5 rounded-md text-sm transition-colors">Apply</a>
-                </div>
-                <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Full-Stack Developer (React/Python)</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">On-site • Full-time</p>
+                    {% endfor %}
+                {% else %}
+                    <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md text-center">
+                        <p class="text-gray-600 dark:text-gray-300">There are no open positions at the moment. Please check back later!</p>
                     </div>
-                    <a href="{{ url_for('application_form') }}" class="bg-brand-blue hover:bg-brand-blue-light text-white font-semibold py-2 px-5 rounded-md text-sm transition-colors">Apply</a>
-                </div>
-                <div class="bg-white dark:bg-brand-dark p-6 rounded-lg shadow-md flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Technology Internship Program</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">On-site • Internship</p>
-                    </div>
-                    <a href="{{ url_for('application_form') }}" class="bg-brand-blue hover:bg-brand-blue-light text-white font-semibold py-2 px-5 rounded-md text-sm transition-colors">Apply</a>
-                </div>
+                {% endif %}
             </div>
         </div>
     </section>
