@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendhan Info Tech - Admin Panel</title>
+    <!-- Your existing styles from ADMIN.HTML.html -->
+    <style>
+        :root {
+            --bg-gradient-start: #1e3c72;
+            --bg-gradient-end: #2a5298;
+            --sidebar-bg: rgba(0, 0, 0, 0.3);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --accent-primary: #e91e63;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); color: var(--text-primary); min-height: 100vh; }
+        .container { display: flex; }
+        .sidebar { width: 250px; background: var(--sidebar-bg); backdrop-filter: blur(10px); padding: 20px 0; position: fixed; height: 100vh; }
+        .logo-section { padding: 0 20px 30px 20px; border-bottom: 1px solid var(--border-color); }
+        .nav-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; transition: all 0.3s ease; border-left: 3px solid transparent; }
+        .nav-item.active, .nav-item:hover { background: var(--card-bg); border-left-color: var(--accent-primary); }
+        .main-content { flex: 1; margin-left: 250px; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 20px; background: var(--card-bg); border-radius: 15px; }
+        .page-title { font-size: 28px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-bg); border-radius: 15px; padding: 25px; text-align: center; }
+        .stat-number { font-size: 36px; color: var(--accent-primary); }
+        .content-section { background: var(--card-bg); border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+        .section-title { font-size: 20px; margin-bottom: 20px; }
+        .table-container { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { background: color-mix(in srgb, var(--accent-primary) 20%, transparent); }
+        .edit-btn, .delete-btn, .view-btn { padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; color: white; margin-right: 5px; }
+        .view-btn { background: #4caf50; }
+        .edit-btn { background: #2196f3; }
+        .delete-btn { background: #f44336; }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        .form-group label { display: block; margin-bottom: 8px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.2); color: var(--text-primary); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal { background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); border-radius: 15px; padding: 30px; max-width: 650px; width: 90%; transform: scale(0.9); transition: all 0.3s ease; }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-btn { background: none; border: none; font-size: 24px; color: var(--text-primary); cursor: pointer; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn-primary { background: var(--accent-primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        .btn-secondary { background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        .logout-btn { background: #ff9800; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; }
+        .hidden { display: none; }
+        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 20px; border-radius: 8px; color: white; z-index: 3000; transform: translateX(120%); transition: transform 0.4s ease-in-out; }
+        .notification.show { transform: translateX(0); }
+        .notification.success { background: #4caf50; }
+        .notification.error { background: #f44336; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .details-item strong { color: var(--accent-primary); }
+        .reply-section { border-top: 1px solid var(--border-color); margin-top: 1rem; padding-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo-section"><h3>Admin Panel</h3></div>
+            <div class="nav-item active" onclick="showSection('dashboard', this)"><span>📊</span> Dashboard</div>
+            <div class="nav-item" onclick="showSection('applications', this)"><span>📋</span> Applications</div>
+            <div class="nav-item" onclick="showSection('messages', this)"><span>💬</span> Messages</div>
+            <!-- Other nav items from your HTML -->
+        </div>
+
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section">
+                <div class="header"><h1 class="page-title">Dashboard</h1><a href="{{ url_for('logout') }}" class="logout-btn">Logout</a></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-number" id="totalApplications">0</div><div class="stat-label">Total Applications</div></div>
+                    <div class="stat-card"><div class="stat-number" id="totalMessages">0</div><div class="stat-label">Total Messages</div></div>
+                    <div class="stat-card"><div class="stat-number" id="totalUsers">0</div><div class="stat-label">Admin Users</div></div>
+                </div>
+            </div>
+
+            <!-- Applications Section -->
+            <div id="applications" class="section hidden">
+                 <div class="header"><h1 class="page-title">Job Applications</h1></div>
+                 <div class="content-section">
+                    <div class="table-container">
+                        <table class="data-table" id="applicationsTable">
+                            <thead><tr><th>Applicant Name</th><th>Position</th><th>Date Applied</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody><!-- Populated by JS --></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Messages Section -->
+            <div id="messages" class="section hidden">
+                <div class="header"><h1 class="page-title">Contact Messages</h1></div>
+                <div class="content-section">
+                    <div class="table-container">
+                        <table class="data-table" id="messagesTable">
+                             <thead><tr><th>From</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody><!-- Populated by JS --></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS (NEW/MODIFIED) -->
+    <div id="applicationModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Application Details</h3><button class="close-btn" onclick="closeModal('applicationModal')">×</button></div>
+            <div id="applicationModalBody">
+                <!-- Details will be injected by JS -->
+            </div>
+            <div class="reply-section">
+                <h4 class="section-title">Send Reply / Update Status</h4>
+                <div class="form-group">
+                    <label for="appReplyContent">Reply Message</label>
+                    <textarea id="appReplyContent" rows="4" placeholder="Write a reply to the applicant..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="appStatus">Update Status</label>
+                    <select id="appStatus">
+                        <option value="New">New</option>
+                        <option value="Viewed">Viewed</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Replied">Replied</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal('applicationModal')">Close</button>
+                <button type="button" class="btn-primary" id="saveApplicationChangesBtn">Save Changes & Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header"><h3 class="modal-title">Message Details</h3><button class="close-btn" onclick="closeModal('messageModal')">×</button></div>
+            <div id="messageModalBody">
+                <!-- Details will be injected by JS -->
+            </div>
+            <div class="reply-section">
+                 <h4 class="section-title">Send Reply</h4>
+                <div class="form-group">
+                    <label for="msgReplyContent">Reply Message</label>
+                    <textarea id="msgReplyContent" rows="4" placeholder="Write a reply..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal('messageModal')">Close</button>
+                <button type="button" class="btn-primary" id="sendMessageReplyBtn">Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+<script>
+    // --- Global Helpers ---
+    async function fetchAPI(endpoint, options = {}) {
+        try {
+            const response = await fetch(endpoint, options);
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({ message: `HTTP error ${response.status}` }));
+                throw new Error(data.message || data.error);
+            }
+            if (response.status === 204) return { status: 'success' };
+            return await response.json();
+        } catch (error) {
+            console.error(`API Error on ${endpoint}:`, error);
+            showNotification(error.message, 'error');
+            return null;
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        const notif = document.getElementById('notification');
+        notif.textContent = message;
+        notif.className = `notification ${type} show`;
+        setTimeout(() => notif.classList.remove('show'), 3500);
+    }
+
+    function showModal(modalId) { document.getElementById(modalId)?.classList.add('active'); }
+    function closeModal(modalId) { document.getElementById(modalId)?.classList.remove('active'); }
+
+    function showSection(sectionId, element) {
+        document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+        document.getElementById(sectionId)?.classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        element?.classList.add('active');
+        document.title = `Admin - ${element.querySelector('span:last-child').textContent}`;
+    }
+
+    const renderTable = (tableId, data, rowGenerator) => {
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        if (!tableBody) return;
+        const colspan = document.querySelector(`#${tableId} thead th`).parentElement.children.length;
+        if (data && data.length > 0) {
+            tableBody.innerHTML = data.map(rowGenerator).join('');
+        } else {
+            tableBody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center; padding: 20px;">No items found.</td></tr>`;
+        }
+    };
+
+    // --- Data Population ---
+    async function populateAll() {
+        await populateDashboard();
+        await populateApplications();
+        await populateMessages();
+    }
+
+    async function populateDashboard() {
+        const data = await fetchAPI('/api/dashboard-data');
+        if (!data) return;
+        document.getElementById('totalApplications').innerText = data.stats.totalApplications || 0;
+        document.getElementById('totalMessages').innerText = data.stats.totalMessages || 0;
+        document.getElementById('totalUsers').innerText = data.stats.totalUsers || 0;
+    }
+
+    async function populateApplications() {
+        const data = await fetchAPI('/api/applications');
+        renderTable('applicationsTable', data, item => `
+            <tr data-id="${item.id}">
+                <td>${item.name}</td>
+                <td>${item.position}</td>
+                <td>${item.date}</td>
+                <td>${item.status}</td>
+                <td>
+                    <button class="view-btn" onclick="viewApplication(${item.id})">View/Reply</button>
+                    <button class="delete-btn" onclick="deleteItem('application', ${item.id})">Delete</button>
+                </td>
+            </tr>
+        `);
+    }
+
+    async function populateMessages() {
+        const data = await fetchAPI('/api/messages');
+        renderTable('messagesTable', data, item => `
+            <tr data-id="${item.id}">
+                <td>${item.from}</td>
+                <td title="${item.subject}">${item.subject.substring(0, 40)}...</td>
+                <td>${item.date}</td>
+                <td>${item.status}</td>
+                <td>
+                    <button class="view-btn" onclick="viewMessage(${item.id})">View/Reply</button>
+                    <button class="delete-btn" onclick="deleteItem('message', ${item.id})">Delete</button>
+                </td>
+            </tr>
+        `);
+    }
+
+    // --- Modal & Form Handling (NEW/MODIFIED) ---
+    async function viewApplication(id) {
+        const data = await fetchAPI(`/api/application/${id}`);
+        if (!data) return;
+
+        const filesHtml = data.files.length > 0
+            ? `<ul>${data.files.map(file => `<li><a href="/download/${data.folder}/${file}" target="_blank" class="text-blue-400 hover:underline">${file}</a></li>`).join('')}</ul>`
+            : '<p>No files uploaded.</p>';
+
+        const repliesHtml = data.replies.length > 0
+            ? `<div class="mt-4"><strong>Reply History:</strong><ul>${data.replies.map(r => `<li class="mt-2 p-2 bg-gray-700/50 rounded"><em>"${r.content}"</em><br><small>- ${r.author} on ${r.date}</small></li>`).join('')}</ul></div>`
+            : '';
+
+        const body = document.getElementById('applicationModalBody');
+        body.innerHTML = `
+            <div class="details-grid">
+                <div><p><strong>Applicant:</strong> ${data.fullName}</p></div>
+                <div><p><strong>Position:</strong> ${data.position}</p></div>
+                <div><p><strong>Email:</strong> ${data.email}</p></div>
+                <div><p><strong>Phone:</strong> ${data.phone}</p></div>
+                <div><p><strong>Location:</strong> ${data.location}</p></div>
+                <div><p><strong>Date:</strong> ${data.date}</p></div>
+            </div>
+            <div class="mt-4">
+                <strong>Attachments:</strong>
+                ${filesHtml}
+            </div>
+            ${repliesHtml}
+        `;
+        document.getElementById('appStatus').value = data.status;
+        document.getElementById('appReplyContent').value = ''; // Clear previous reply
+        document.getElementById('saveApplicationChangesBtn').onclick = () => saveApplicationChanges(id);
+        showModal('applicationModal');
+    }
+
+    async function saveApplicationChanges(id) {
+        const status = document.getElementById('appStatus').value;
+        const replyContent = document.getElementById('appReplyContent').value.trim();
+
+        // First, update the status
+        const statusResult = await fetchAPI('/api/application/update-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, status: status })
+        });
+        if (!statusResult) return; // Error is already shown by fetchAPI
+
+        // If there's a reply, send it
+        if (replyContent) {
+            const replyResult = await fetchAPI('/api/reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, type: 'application', content: replyContent })
+            });
+            if (!replyResult) return;
+        }
+
+        showNotification('Changes saved successfully!', 'success');
+        closeModal('applicationModal');
+        await populateApplications();
+    }
+
+    async function viewMessage(id) {
+        const data = await fetchAPI(`/api/message/${id}`);
+        if (!data) return;
+
+        const repliesHtml = data.replies.length > 0
+            ? `<div class="mt-4"><strong>Reply History:</strong><ul>${data.replies.map(r => `<li class="mt-2 p-2 bg-gray-700/50 rounded"><em>"${r.content}"</em><br><small>- ${r.author} on ${r.date}</small></li>`).join('')}</ul></div>`
+            : '';
+
+        const body = document.getElementById('messageModalBody');
+        body.innerHTML = `
+            <div class="details-grid">
+                <div><p><strong>From:</strong> ${data.fullName}</p></div>
+                <div><p><strong>Date:</strong> ${data.date}</p></div>
+                <div style="grid-column: 1 / -1;"><p><strong>Email:</strong> ${data.email}</p></div>
+            </div>
+            <div class="mt-4 p-3 bg-gray-700/50 rounded">
+                <strong>Message:</strong>
+                <p class="mt-2 whitespace-pre-wrap">${data.message}</p>
+            </div>
+            ${repliesHtml}
+        `;
+        document.getElementById('msgReplyContent').value = '';
+        document.getElementById('sendMessageReplyBtn').onclick = () => sendMessageReply(id);
+        showModal('messageModal');
+    }
+
+    async function sendMessageReply(id) {
+        const replyContent = document.getElementById('msgReplyContent').value.trim();
+        if (!replyContent) {
+            showNotification('Reply content cannot be empty.', 'error');
+            return;
+        }
+        const result = await fetchAPI('/api/reply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, type: 'message', content: replyContent })
+        });
+
+        if (result) {
+            showNotification('Reply sent successfully!', 'success');
+            closeModal('messageModal');
+            await populateMessages();
+        }
+    }
+
+
+    // --- Generic Delete Handling ---
+    async function deleteItem(itemType, id) {
+        if (!confirm(`Are you sure you want to delete this ${itemType}? This action cannot be undone.`)) {
+            return;
+        }
+        
+        const result = await fetchAPI(`/api/item/delete/${itemType}/${id}`, { method: 'POST' });
+        if (result) {
+            showNotification(result.message, 'success');
+            if (itemType === 'application') {
+                populateApplications();
+            } else if (itemType === 'message') {
+                populateMessages();
+            }
+            populateDashboard(); // Refresh dashboard stats
+        }
+    }
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        populateAll();
+    });
+</script>
+</body>
+</html>
