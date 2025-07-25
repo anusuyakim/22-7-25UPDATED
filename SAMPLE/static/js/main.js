@@ -1,406 +1,449 @@
-// UNIFIED AND CORRECTED main.js
+// Function to handle OTP and form submission logic
+function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, timerId, formType, submitUrl) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+
+    const sendVerificationBtn = document.getElementById(sendBtnId);
+    const verifyOtpBtn = document.getElementById(verifyBtnId);
+    const submitBtn = document.getElementById(submitBtnId);
+    const otpSection = document.getElementById(otpSectionId);
+    const otpTimer = document.getElementById(timerId);
+    const successMessage = form.querySelector('.success-message');
+    const errorMessage = form.querySelector('.error-message');
+    let countdown;
+
+    function showMessage(element, message) {
+        hideMessages();
+        const span = element.querySelector('span');
+        span.innerHTML = message;
+        element.style.display = 'block';
+    }
+
+    function hideMessages() {
+        if (successMessage) successMessage.style.display = 'none';
+        if (errorMessage) errorMessage.style.display = 'none';
+    }
+
+    function startTimer(duration) {
+        let timer = duration;
+        otpTimer.style.display = 'block';
+        sendVerificationBtn.style.display = 'none';
+        countdown = setInterval(() => {
+            const minutes = parseInt(timer / 60, 10);
+            const seconds = parseInt(timer % 60, 10);
+            otpTimer.textContent = `Resend available in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (--timer < 0) {
+                clearInterval(countdown);
+                otpTimer.innerHTML = '';
+                sendVerificationBtn.textContent = 'Resend Code';
+                sendVerificationBtn.style.display = 'inline-block';
+            }
+        }, 1000);
+    }
+    
+    sendVerificationBtn.addEventListener('click', async () => {
+        hideMessages();
+        const emailInput = form.querySelector('input[name="email"]');
+        const email = emailInput.value.trim();
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            return showMessage(errorMessage, 'Please enter a valid email address.');
+        }
+
+        sendVerificationBtn.disabled = true;
+        sendVerificationBtn.textContent = 'Sending...';
+
+        try {
+            const response = await fetch('/api/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to send OTP.');
+            
+            showMessage(successMessage, data.message);
+            otpSection.style.display = 'block';
+            clearInterval(countdown);
+            startTimer(120);
+        } catch (error) {
+            showMessage(errorMessage, error.message);
+        } finally {
+            sendVerificationBtn.disabled = false;
+            sendVerificationBtn.textContent = 'Send Verification Code';
+        }
+    });
+
+    const otpInputs = otpSection.querySelectorAll('.otp-input');
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', () => {
+            if (input.value && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === "Backspace" && !input.value && index > 0) {
+                 otpInputs[index - 1].focus();
+            }
+        });
+    });
+
+    verifyOtpBtn.addEventListener('click', async () => {
+        hideMessages();
+        const otp = Array.from(otpInputs).map(input => input.value).join('');
+        const email = form.querySelector('input[name="email"]').value;
+
+        if (otp.length !== 6) {
+            return showMessage(errorMessage, 'Please enter the full 6-digit code.');
+        }
+        
+        try {
+            const response = await fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Verification failed.');
+            
+            showMessage(successMessage, data.message);
+            otpSection.style.display = 'none';
+            submitBtn.disabled = false;
+            clearInterval(countdown);
+            otpTimer.style.display = 'none';
+        } catch (error) {
+             showMessage(errorMessage, error.message);
+        }
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMessages();
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(submitUrl, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Submission failed.');
+            
+            showMessage(successMessage, data.message);
+            form.reset();
+            submitBtn.disabled = true;
+
+        } catch (error) {
+            showMessage(errorMessage, error.message);
+            submitBtn.disabled = false; 
+        } finally {
+             submitBtn.textContent = formType === 'job' ? 'Submit Application' : 'Send Message';
+        }
+    });
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
-
     // --- Loading Overlay ---
     const loadingOverlay = document.getElementById('loadingOverlay');
-    if (loadingOverlay) {
-        setTimeout(() => { 
-            loadingOverlay.classList.add('hidden'); 
-        }, 500);
-    }
+    window.addEventListener('load', () => {
+        AOS.init({ duration: 800, once: true });
+        if(loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => loadingOverlay.style.display = 'none', 300);
+        }
+    });
     
-    // --- AOS Init ---
-    if (typeof AOS !== 'undefined') {
-        AOS.init({ duration: 800, once: true, offset: 50 });
-    }
-
-    // --- ICONS ---
-    const icons = {
-        menu: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>`,
-        close: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`,
-        chatbotOpen: `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>`,
-        chatbotClose: `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`,
-        chatbotSend: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"></path></svg>`,
-        heroPrev: `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>`,
-        heroNext: `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`,
-    };
-    
-    // --- ICON INJECTION ---
-    const setIcon = (id, icon) => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = icon;
-    };
-    setIcon('mobile-menu-toggle', icons.menu);
-    setIcon('chatbot-toggle', icons.chatbotOpen);
-    setIcon('chatbot-close-btn', icons.close);
-    setIcon('chatbot-send-btn', icons.chatbotSend);
-    setIcon('hero-prev-btn', icons.heroPrev);
-    setIcon('hero-next-btn', icons.heroNext);
-    setIcon('portfolio-prev-btn', icons.heroPrev);
-    setIcon('portfolio-next-btn', icons.heroNext);
-
-    // --- THEME TOGGLE ---
-    const htmlEl = document.documentElement;
+    // --- Theme Toggling ---
+    const themeToggle = document.getElementById('theme-toggle-link');
+    const mobileThemeToggle = document.getElementById('mobile-theme-toggle-link');
+    const html = document.documentElement;
     const applyTheme = (theme) => {
-        const desktopLink = document.getElementById('theme-toggle-link');
-        const mobileLink = document.getElementById('mobile-theme-toggle-link');
         if (theme === 'dark') {
-            htmlEl.classList.add('dark');
-            if(desktopLink) desktopLink.textContent = 'DARK';
-            if(mobileLink) mobileLink.textContent = 'DARK';
+            html.classList.add('dark');
+            if (themeToggle) themeToggle.textContent = 'Light';
+            if (mobileThemeToggle) mobileThemeToggle.textContent = 'Light';
         } else {
-            htmlEl.classList.remove('dark');
-            if(desktopLink) desktopLink.textContent = 'LIGHT';
-            if(mobileLink) mobileLink.textContent = 'LIGHT';
+            html.classList.remove('dark');
+            if (themeToggle) themeToggle.textContent = 'Dark';
+            if (mobileThemeToggle) mobileThemeToggle.textContent = 'Dark';
         }
     };
     const toggleTheme = () => {
-        const newTheme = htmlEl.classList.contains('dark') ? 'light' : 'dark';
+        const newTheme = html.classList.contains('dark') ? 'light' : 'dark';
         localStorage.setItem('theme', newTheme);
         applyTheme(newTheme);
     };
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(currentTheme);
-    const themeToggleLink = document.getElementById('theme-toggle-link');
-    const mobileThemeToggleLink = document.getElementById('mobile-theme-toggle-link');
-    if (themeToggleLink) themeToggleLink.addEventListener('click', toggleTheme);
-    if (mobileThemeToggleLink) mobileThemeToggleLink.addEventListener('click', toggleTheme);
-    
-    // --- MOBILE MENU ---
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+    if (mobileThemeToggle) mobileThemeToggle.addEventListener('click', toggleTheme);
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+
+    // --- Mobile Menu ---
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     if (mobileMenuToggle && mobileMenu) {
-        const toggleMobileMenu = (isOpen) => {
-            if (isOpen) {
-                mobileMenu.classList.remove('translate-x-full');
-                mobileMenuToggle.innerHTML = icons.close;
-                document.body.style.overflow = 'hidden';
-            } else {
-                mobileMenu.classList.add('translate-x-full');
-                mobileMenuToggle.innerHTML = icons.menu;
-                document.body.style.overflow = 'unset';
-            }
-        };
         mobileMenuToggle.addEventListener('click', () => {
-            toggleMobileMenu(mobileMenu.classList.contains('translate-x-full'));
-        });
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => toggleMobileMenu(false));
+            mobileMenu.classList.toggle('translate-x-full');
         });
     }
 
-    // --- HERO CAROUSEL (HOMEPAGE ONLY) ---
+    // --- Hero Slider ---
     const heroSlidesContainer = document.getElementById('hero-slides-container');
+    const heroContentContainer = document.getElementById('hero-content-container');
+    const heroDotsContainer = document.getElementById('hero-dots-container');
+    const heroPrevBtn = document.getElementById('hero-prev-btn');
+    const heroNextBtn = document.getElementById('hero-next-btn');
     if (heroSlidesContainer) {
-        const heroSlidesData = [
-          { image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop', title: 'Empowering Business Through Women-Led Innovation', description: 'Vendhan Info Tech pioneers bespoke IT solutions that drive growth and efficiency.', linkText: 'Our Services', linkHref: '/services' },
-          { image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop', title: 'Your Vision, Engineered with Precision and Passion', description: 'We collaborate with you to transform ideas into robust, scalable, and secure software.', linkText: 'View Our Work', linkHref: '/portfolio/ai-logistics-platform' },
-          { image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop', title: 'Pioneering AI-Powered Solutions for a Digital Future', description: 'From machine learning models to intelligent automation, we build the future of technology.', linkText: 'Explore AI', linkHref: '/services/ai-machine-learning' },
+        const slidesData = [
+            { supertitle: 'Pioneering Women-Led Technology', title: 'Engineering the Future, Led by Vision', subtitle: 'We translate your unique business vision into high-performance, secure, and scalable software solutions.', img: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop', link: '/about-us' },
+            { supertitle: 'AI & Machine Learning', title: 'Intelligent Solutions, Real-World Impact', subtitle: 'We build custom AI models to automate processes, predict outcomes, and unlock hidden value in your data.', img: 'https://images.unsplash.com/photo-1620712943543-270322458121?q=80&w=2206&auto=format&fit=crop', link: '/services/ai-machine-learning' },
+            { supertitle: 'Custom Software Development', title: 'Your Vision, Engineered', subtitle: 'From complex enterprise platforms to intuitive mobile apps, we deliver high-performance software tailored to you.', img: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop', link: '/services/software-development' }
         ];
-        const heroContentContainer = document.getElementById('hero-content-container');
-        const heroDotsContainer = document.getElementById('hero-dots-container');
-        let heroCurrentIndex = 0;
-        
-        heroSlidesData.forEach((slide, index) => {
-            heroSlidesContainer.innerHTML += `<div class="hero-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}"><img src="${slide.image}" alt="${slide.title}" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div></div>`;
-            if(heroDotsContainer) heroDotsContainer.innerHTML += `<button data-index="${index}" class="hero-dot h-1 transition-all duration-500 rounded-full ${index === 0 ? 'bg-white w-12' : 'bg-white/40 w-6 hover:bg-white'}"></button>`;
+        let currentSlide = 0;
+        let slideInterval;
+        slidesData.forEach((slide, index) => {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = 'hero-slide';
+            slideDiv.innerHTML = `<img src="${slide.img}" alt="${slide.title}" class="hero-slide-img"><div class="hero-slide-overlay"></div>`;
+            heroSlidesContainer.appendChild(slideDiv);
+            const dot = document.createElement('button');
+            dot.className = 'hero-dot';
+            dot.addEventListener('click', () => { goToSlide(index); resetInterval(); });
+            heroDotsContainer.appendChild(dot);
         });
-
-        const updateHeroContent = (index) => {
-            const slide = heroSlidesData[index];
-            if(heroContentContainer) heroContentContainer.innerHTML = `<div class="max-w-3xl animate-fade-in"><h1 class="text-5xl md:text-6xl font-light leading-tight">${slide.title}</h1><p class="mt-6 text-lg max-w-2xl text-gray-300">${slide.description}</p><a href="${slide.linkHref}" class="mt-8 inline-block text-lg font-medium text-white border-b-2 border-transparent hover:border-white transition-all duration-300 pb-1">${slide.linkText}</a></div>`;
-        };
-
-        const showHeroSlide = (index) => {
-            document.querySelectorAll('.hero-slide').forEach((slide, i) => { slide.style.opacity = i === index ? '1' : '0'; });
-            document.querySelectorAll('.hero-dot').forEach((dot, i) => { dot.className = `hero-dot h-1 transition-all duration-500 rounded-full ${i === index ? 'bg-white w-12' : 'bg-white/40 w-6 hover:bg-white'}`; });
-            updateHeroContent(index);
-            heroCurrentIndex = index;
-        };
-        
-        const heroPrevBtn = document.getElementById('hero-prev-btn');
-        const heroNextBtn = document.getElementById('hero-next-btn');
-        if(heroPrevBtn) heroPrevBtn.addEventListener('click', () => showHeroSlide((heroCurrentIndex - 1 + heroSlidesData.length) % heroSlidesData.length));
-        if(heroNextBtn) heroNextBtn.addEventListener('click', () => showHeroSlide((heroCurrentIndex + 1) % heroSlidesData.length));
-        if(heroDotsContainer) heroDotsContainer.addEventListener('click', (e) => { if (e.target.matches('.hero-dot')) showHeroSlide(parseInt(e.target.dataset.index)); });
-        const heroInterval = setInterval(() => showHeroSlide((heroCurrentIndex + 1) % heroSlidesData.length), 7000);
-        showHeroSlide(0);
+        const allSlides = heroSlidesContainer.querySelectorAll('.hero-slide');
+        const allDots = heroDotsContainer.querySelectorAll('.hero-dot');
+        function goToSlide(index) {
+            currentSlide = (index + slidesData.length) % slidesData.length;
+            allSlides.forEach(s => s.classList.remove('active'));
+            allSlides[currentSlide].classList.add('active');
+            allDots.forEach(d => d.classList.remove('active'));
+            allDots[currentSlide].classList.add('active');
+            const slide = slidesData[currentSlide];
+            heroContentContainer.innerHTML = `
+                <div class="hero-content" style="animation: fade-in 0.8s ease-out forwards;">
+                    <p class="text-lg font-semibold text-blue-300 uppercase tracking-wider">${slide.supertitle}</p>
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mt-4">${slide.title}</h1>
+                    <p class="mt-6 max-w-2xl text-lg text-gray-300">${slide.subtitle}</p>
+                    <a href="${slide.link}" class="mt-10 inline-block bg-brand-blue hover:bg-brand-blue-light text-white font-bold py-4 px-10 rounded-lg text-lg transition-transform hover:scale-105">Learn More</a>
+                </div>`;
+        }
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => goToSlide(currentSlide + 1), 6000);
+        }
+        heroNextBtn.addEventListener('click', () => { goToSlide(currentSlide + 1); resetInterval(); });
+        heroPrevBtn.addEventListener('click', () => { goToSlide(currentSlide - 1); resetInterval(); });
+        goToSlide(0);
+        resetInterval();
     }
-
-    // --- PORTFOLIO CAROUSEL (HOMEPAGE ONLY) ---
-    const portfolioScrollContainer = document.getElementById('portfolio-scroll-container');
-    if(portfolioScrollContainer) {
-        const portfolioItems = [
-          { image: 'https://images.unsplash.com/photo-1554744512-d6c603f27c54?q=80&w=2070&auto=format&fit=crop', title: 'AI-Powered Logistics Platform', linkHref: '/portfolio/ai-logistics-platform' },
-          { image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop', title: 'Cloud Migration Strategy', linkHref: '/portfolio/cloud-migration' },
-          { image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop', title: 'Secure Fintech Application', linkHref: '/portfolio/secure-fintech-app' },
-          { image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', title: 'Enterprise ERP Implementation', linkHref: '/portfolio/enterprise-erp' },
+    
+    // --- TATA-STYLE PORTFOLIO SLIDER ---
+    const portfolioSlider = document.getElementById('portfolio-slider');
+    if (portfolioSlider) {
+        const portfolioData = [
+            { img: 'https://images.unsplash.com/photo-1554744512-d6c603f27c54?q=80&w=2070&auto=format&fit=crop', title: 'AI-Powered Logistics Platform', link: '/portfolio/ai-logistics-platform' },
+            { img: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop', title: 'Cloud Migration for Healthcare', link: '/portfolio/cloud-migration' },
+            { img: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop', title: 'Secure Mobile Fintech App', link: '/portfolio/secure-fintech-app' },
+            { img: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', title: 'Custom Enterprise ERP System', link: '/portfolio/enterprise-erp' },
+            { img: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop', title: 'Predictive Analytics Engine', link: '/portfolio/ai-logistics-platform' }
         ];
-        portfolioItems.forEach(item => {
-            portfolioScrollContainer.innerHTML += `<div class="flex-shrink-0 w-[90%] sm:w-1/2 md:w-1/3 lg:w-1/4 snap-start"><div class="relative group rounded-lg overflow-hidden h-[60vh] shadow-lg"><img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" /><div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div><div class="absolute bottom-0 left-0 p-6 text-white"><h3 class="text-3xl font-light">${item.title}</h3><a href="${item.linkHref}" class="mt-2 inline-block text-lg font-medium border-b-2 border-transparent hover:border-white transition-all duration-300">Explore</a></div></div></div>`;
-        });
-        const scrollPortfolio = (dir) => {
-            const scrollAmount = portfolioScrollContainer.offsetWidth * 0.8;
-            portfolioScrollContainer.scrollBy({ left: dir === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
-        };
-        const portfolioPrevBtn = document.getElementById('portfolio-prev-btn');
-        const portfolioNextBtn = document.getElementById('portfolio-next-btn');
-        if(portfolioPrevBtn) portfolioPrevBtn.addEventListener('click', () => scrollPortfolio('left'));
-        if(portfolioNextBtn) portfolioNextBtn.addEventListener('click', () => scrollPortfolio('right'));
-    }
 
-    // --- REFINED SMOOTH SCROLL LOGIC FOR ALL ANCHOR LINKS ---
-    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const targetHref = this.getAttribute('href');
-            if (targetHref.startsWith('#') || (targetHref.startsWith('/#') && window.location.pathname === '/')) {
-                const hash = this.hash;
-                const targetElement = document.querySelector(hash);
-                if (targetElement) {
-                    e.preventDefault();
-                    const headerOffset = 80;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                }
+        portfolioSlider.innerHTML = portfolioData.map(item => `
+            <div class="portfolio-slider-card">
+                <a href="${item.link}">
+                    <img src="${item.img}" alt="${item.title}" class="portfolio-slider-card-img">
+                    <div class="portfolio-slider-card-overlay">
+                        <h3 class="portfolio-slider-card-title">${item.title}</h3>
+                        <span class="portfolio-slider-card-link">Explore</span>
+                    </div>
+                </a>
+            </div>`).join('');
+
+        const prevBtn = document.getElementById('portfolio-prev-btn-new');
+        const nextBtn = document.getElementById('portfolio-next-btn-new');
+        const progressBar = document.getElementById('portfolio-progress-bar');
+        
+        let currentIndex = 0;
+        const totalSlides = portfolioData.length;
+        
+        // Determine how many slides are visible based on screen width
+        const getSlidesToDisplay = () => {
+            if (window.innerWidth >= 1024) return 4;
+            if (window.innerWidth >= 640) return 2;
+            return 1;
+        }
+
+        let slidesToDisplay = getSlidesToDisplay();
+
+        function updateSlider() {
+            // Adjust card widths based on how many are displayed
+            const cards = portfolioSlider.querySelectorAll('.portfolio-slider-card');
+            cards.forEach(card => {
+                card.style.flexBasis = `${100 / slidesToDisplay}%`;
+            });
+
+            const offset = -currentIndex * (100 / slidesToDisplay);
+            portfolioSlider.style.transform = `translateX(${offset}%)`;
+            
+            const progressWidth = ((currentIndex + slidesToDisplay) / totalSlides) * 100;
+            progressBar.style.width = `${progressWidth > 100 ? 100 : progressWidth}%`;
+
+            prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+            nextBtn.style.display = currentIndex >= totalSlides - slidesToDisplay ? 'none' : 'flex';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < totalSlides - slidesToDisplay) {
+                currentIndex++;
+                updateSlider();
             }
         });
-    });
-    
-    // --- CHATBOT (GLOBAL) ---
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlider();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            slidesToDisplay = getSlidesToDisplay();
+            // Reset index if it becomes invalid on resize
+            if (currentIndex > totalSlides - slidesToDisplay) {
+                currentIndex = totalSlides - slidesToDisplay;
+            }
+            updateSlider();
+        });
+
+        // Initial setup
+        updateSlider();
+    }
+
+    // --- Chatbot ---
     const chatbotToggle = document.getElementById('chatbot-toggle');
     const chatbotWindow = document.getElementById('chatbot-window');
-    const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
-    const messagesContainer = document.getElementById('chatbot-messages-container');
+    const closeBtn = document.getElementById('chatbot-close-btn');
     const chatForm = document.getElementById('chat-form');
-    const inputField = document.getElementById('chatbot-input');
+    const chatInput = document.getElementById('chatbot-input');
+    const messagesContainer = document.getElementById('chatbot-messages-container');
     const sendBtn = document.getElementById('chatbot-send-btn');
-    let isChatbotLoading = false;
-
-    const addMessage = (text, type) => {
-        if(!messagesContainer) return;
-        const messageEl = document.createElement('div');
-        messageEl.className = `flex items-start gap-3 ${type === 'user' ? 'justify-end' : 'justify-start'}`;
-        const botAvatar = `<div class="w-8 h-8 rounded-full bg-header-blue flex items-center justify-center text-white font-bold flex-shrink-0">V</div>`;
-        const textBubble = `<div class="chat-bubble ${type === 'user' ? 'user' : 'bot'}">${text.replace(/\n/g, '<br>')}</div>`;
-        messageEl.innerHTML = type === 'bot' ? `${botAvatar}${textBubble}` : textBubble;
-        messagesContainer.appendChild(messageEl);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    };
-    
-    const toggleChatbot = (isOpen) => {
-        if(!chatbotWindow || !chatbotToggle) return;
-        if (isOpen) {
-            chatbotWindow.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
-            chatbotToggle.innerHTML = icons.chatbotClose;
-            if (messagesContainer.children.length === 0) {
-                 addMessage("Hi there! I'm the Vendhan Info Tech AI assistant. How can I help you today?", "bot");
-            }
-        } else {
-            chatbotWindow.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-            chatbotToggle.innerHTML = icons.chatbotOpen;
-        }
-    };
-
-    if (chatbotToggle) chatbotToggle.addEventListener('click', () => toggleChatbot(chatbotWindow.classList.contains('opacity-0')));
-    if (chatbotCloseBtn) chatbotCloseBtn.addEventListener('click', () => toggleChatbot(false));
-    if (chatForm) chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const userMessage = inputField.value.trim();
-        if (userMessage === '' || isChatbotLoading) return;
-        
-        addMessage(userMessage, 'user');
-        inputField.value = '';
-        inputField.focus();
-        isChatbotLoading = true;
+    if (chatbotToggle) {
+        chatbotToggle.innerHTML = `<i class="fas fa-robot text-2xl"></i>`;
+        closeBtn.innerHTML = `<i class="fas fa-times text-xl"></i>`;
+        sendBtn.innerHTML = `<i class="fas fa-paper-plane"></i>`;
         sendBtn.disabled = true;
-
-        const loadingEl = document.createElement('div');
-        loadingEl.id = 'chatbot-loading';
-        loadingEl.className = 'flex items-start gap-3 justify-start';
-        loadingEl.innerHTML = `<div class="w-8 h-8 rounded-full bg-header-blue flex items-center justify-center text-white font-bold flex-shrink-0">V</div><div class="chat-bubble bot"><div class="flex items-center space-x-1.5"><span class="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse [animation-delay:0s]"></span><span class="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse [animation-delay:0.2s]"></span><span class="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-pulse [animation-delay:0.4s]"></span></div></div>`;
-        messagesContainer.appendChild(loadingEl);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        
-        try {
-            const response = await fetch('/api/chatbot', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userMessage }),
-            });
-            document.getElementById('chatbot-loading')?.remove();
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            addMessage(data.response || "Sorry, an error occurred.", 'bot');
-        } catch(error) {
-            console.error("Chat API error:", error);
-            document.getElementById('chatbot-loading')?.remove();
-            addMessage("Sorry, I'm having trouble connecting right now. Please try again later.", 'bot');
-        } finally {
-            isChatbotLoading = false;
-            sendBtn.disabled = false;
+        chatInput.addEventListener('input', () => { sendBtn.disabled = chatInput.value.trim() === ''; });
+        const openChat = () => chatbotWindow.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+        const closeChat = () => chatbotWindow.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+        chatbotToggle.addEventListener('click', openChat);
+        closeBtn.addEventListener('click', closeChat);
+        function addMessage(content, sender = 'bot') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message-container ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            messageDiv.innerHTML = `<div class="${sender === 'user' ? 'user-message' : 'bot-message'}">${content}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
-    });
-
-    if (messagesContainer) messagesContainer.addEventListener('click', (e) => {
-        if (e.target.matches('.chat-link')) {
-             toggleChatbot(false);
-        }
-    });
-
-    // --- UNIFIED FORM HANDLING LOGIC ---
-    window.setupForm = (formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, timerId, formType, submitUrl) => {
-        const form = document.getElementById(formId);
-        if (!form) return;
-
-        const sendVerificationBtn = document.getElementById(sendBtnId);
-        const verifyOtpBtn = document.getElementById(verifyBtnId);
-        const submitBtn = document.getElementById(submitBtnId);
-        const otpSection = document.getElementById(otpSectionId);
-        const otpTimer = document.getElementById(timerId);
-        const otpInputs = otpSection ? otpSection.querySelectorAll('.otp-input') : [];
-        const emailInput = form.querySelector('input[name="email"]');
-        
-        let countdown;
-
-        const showFormMessage = (type, message) => {
-            const successMsg = form.querySelector('.success-message');
-            const errorMsg = form.querySelector('.error-message');
-            if (successMsg) successMsg.style.display = 'none';
-            if (errorMsg) errorMsg.style.display = 'none';
-
-            if (type === 'success' && successMsg) {
-                successMsg.style.display = 'block';
-                successMsg.querySelector('span').textContent = message;
-            } else if (type === 'error' && errorMsg) {
-                errorMsg.style.display = 'block';
-                errorMsg.querySelector('span').textContent = message;
-            }
-        };
-
-        const startTimer = () => {
-            if (!otpTimer) return;
-            let duration = 300; // 5 minutes
-            clearInterval(countdown);
-            otpTimer.style.display = 'block';
-            countdown = setInterval(() => {
-                const minutes = Math.floor(duration / 60);
-                const seconds = duration % 60;
-                otpTimer.textContent = `Code expires in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                if (--duration < 0) {
-                    clearInterval(countdown);
-                    otpTimer.textContent = 'Code expired. Please request a new one.';
-                    if(verifyOtpBtn) verifyOtpBtn.disabled = true;
-                }
-            }, 1000);
-        };
-
-        if (sendVerificationBtn) {
-            sendVerificationBtn.addEventListener('click', async () => {
-                if (!emailInput.value || !emailInput.checkValidity()) {
-                    showFormMessage('error', 'Please enter a valid email address.');
-                    return;
-                }
-                sendVerificationBtn.disabled = true;
-                sendVerificationBtn.textContent = 'SENDING...';
-                try {
-                    const response = await fetch('/api/send-otp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: emailInput.value })
-                    });
-                    const data = await response.json();
-                    showFormMessage(response.ok ? 'success' : 'error', data.message || data.error);
-                    if (response.ok) {
-                        if(otpSection) otpSection.style.display = 'block';
-                        startTimer();
-                    }
-                } catch (error) {
-                    console.error('Send OTP Error:', error);
-                    showFormMessage('error', 'Failed to connect. Please check your connection.');
-                } finally {
-                    sendVerificationBtn.disabled = false;
-                    sendVerificationBtn.textContent = sendBtnId.includes('Contact') ? 'Verify Email to Send' : 'Send Verification Code';
-                }
-            });
-        }
-        
-        if (verifyOtpBtn) {
-            verifyOtpBtn.addEventListener('click', async () => {
-                const otp = Array.from(otpInputs).map(input => input.value).join('');
-                if (otp.length !== 6) {
-                    showFormMessage('error', 'Please enter the full 6-digit code.');
-                    return;
-                }
-                try {
-                    const response = await fetch('/api/verify-otp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: emailInput.value, otp: otp })
-                    });
-                    const data = await response.json();
-                    if (!response.ok) {
-                        showFormMessage('error', data.error);
-                    } else {
-                        showFormMessage('success', data.message);
-                        otpSection.style.display = 'none';
-                        submitBtn.disabled = false;
-                        clearInterval(countdown);
-                    }
-                } catch (error) {
-                    console.error('Verify OTP Error:', error);
-                    showFormMessage('error', 'Failed to connect to the server.');
-                }
-            });
-        }
-        
-        if (otpInputs.length > 0) {
-            otpInputs.forEach((input, index) => {
-                input.addEventListener('keyup', (e) => {
-                    const key = e.key;
-                    if (key >= 0 && key <= 9) {
-                        input.value = key;
-                        if (index < otpInputs.length - 1) otpInputs[index + 1].focus();
-                    } else if (key === 'Backspace') {
-                        if (index > 0) otpInputs[index - 1].focus();
-                    }
+        addMessage("Hello! I'm the Vendhan AI Assistant. How can I help you today?");
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+            addMessage(userMessage, 'user');
+            chatInput.value = '';
+            sendBtn.disabled = true;
+            addMessage('<div class="typing-indicator"><span></span><span></span><span></span></div>', 'bot');
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ message: userMessage })
                 });
-            });
-        }
+                const data = await response.json();
+                messagesContainer.querySelector('.typing-indicator').parentElement.parentElement.remove();
+                addMessage(data.response, 'bot');
+            } catch (error) {
+                console.error('Chatbot error:', error);
+                const typingIndicator = messagesContainer.querySelector('.typing-indicator');
+                if (typingIndicator) typingIndicator.parentElement.parentElement.remove();
+                addMessage("I'm sorry, I'm having trouble connecting right now. Please try again in a moment.", 'bot');
+            }
+        });
+    }
 
-        if (form) {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (submitBtn.disabled) {
-                    showFormMessage('error', 'Please verify your email before submitting.');
-                    return;
-                }
-                const originalSubmitText = submitBtn.textContent;
-                submitBtn.innerHTML = '<span class="animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full inline-block mr-2"></span>Submitting...';
-                submitBtn.disabled = true;
-                try {
-                    const formData = new FormData(form);
-                    const response = await fetch(submitUrl, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await response.json();
-                    showFormMessage(response.ok ? 'success' : 'error', data.message || data.error);
-                    if (response.ok) {
-                        form.reset();
-                        submitBtn.disabled = true;
-                    } else {
-                        submitBtn.disabled = false;
-                    }
-                } catch (error) {
-                    console.error('Form Submission Error:', error);
-                    showFormMessage('error', 'An error occurred during submission.');
-                    submitBtn.disabled = false;
-                } finally {
-                    submitBtn.innerHTML = originalSubmitText;
-                }
-            });
+    // --- LIVE UPDATES CARD FEATURE ---
+    const weatherCardContent = document.getElementById('weather-card-content');
+    const newsCardContent = document.getElementById('news-card-content');
+    if (weatherCardContent && newsCardContent) {
+        const fetchLiveUpdatesForCards = (lat, lon) => {
+            weatherCardContent.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Loading weather...</p>';
+            newsCardContent.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Loading news...</p>';
+            let apiUrl = '/api/live-updates';
+            if (lat && lon) {
+                apiUrl += `?lat=${lat}&lon=${lon}`;
+            }
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch data');
+                    return response.json();
+                })
+                .then(data => {
+                    renderWeatherDataForCard(data.weather);
+                    renderNewsDataForCard(data.news);
+                })
+                .catch(error => {
+                    console.error('Live Updates Card Error:', error);
+                    weatherCardContent.innerHTML = `<p class="text-red-500">Weather data unavailable.</p>`;
+                    newsCardContent.innerHTML = `<p class="text-red-500">News data unavailable.</p>`;
+                });
+        };
+        const renderWeatherDataForCard = (weather) => {
+            if (!weather || weather.error) {
+                weatherCardContent.innerHTML = `<p class="text-red-500">${weather?.error || 'Weather data unavailable.'}</p>`;
+                return;
+            }
+            const iconUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`;
+            weatherCardContent.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="text-3xl font-bold text-gray-900 dark:text-white">${weather.name}</h4>
+                        <p class="text-lg capitalize text-gray-600 dark:text-gray-300">${weather.weather[0].description}</p>
+                    </div>
+                    <div class="text-right">
+                        <img src="${iconUrl}" alt="${weather.weather[0].description}" class="w-16 h-16 -mt-4 -mb-4 inline-block">
+                        <p class="text-4xl font-bold text-gray-900 dark:text-white">${Math.round(weather.main.temp)}°C</p>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    Feels like ${Math.round(weather.main.feels_like)}°C  •  Humidity: ${weather.main.humidity}%
+                </p>`;
+        };
+        const renderNewsDataForCard = (news) => {
+            if (!news || news.error || !news.articles || news.articles.length === 0) {
+                newsCardContent.innerHTML = `<p class="text-red-500">${news?.error || 'News data unavailable. Check API Key.'}</p>`;
+                return;
+            }
+            newsCardContent.innerHTML = news.articles.slice(0, 5).map(article => `
+                <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-lg hover:bg-brand-gray dark:hover:bg-gray-800 transition-colors">
+                    <h4 class="font-bold text-gray-900 dark:text-white leading-tight">${article.title}</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">${article.source.name}</p>
+                </a>`).join('');
+        };
+        const locationSuccess = (position) => {
+            fetchLiveUpdatesForCards(position.coords.latitude, position.coords.longitude);
+        };
+        const locationError = () => {
+            console.log("User denied geolocation or an error occurred. Fetching default weather.");
+            fetchLiveUpdatesForCards(null, null);
+        };
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+        } else {
+            console.log("Geolocation is not supported. Fetching default weather.");
+            fetchLiveUpdatesForCards(null, null);
         }
-    };
+    }
 });

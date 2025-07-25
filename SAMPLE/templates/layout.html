@@ -17,7 +17,7 @@
                         'brand-blue-light': '#0095e6',
                         'brand-gray': '#f5f5f5',
                         'brand-dark': '#121212',
-                        'header-blue': '#002d62', // Tata-like blue
+                        'header-blue': '#002d62',
                     },
                     fontFamily: { sans: ['"Inter"', 'sans-serif'] },
                     keyframes: { 'fade-in': { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } },
@@ -36,28 +36,20 @@
 
     <div id="app-wrapper" class="bg-white dark:bg-brand-dark text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
 
-        <!-- HEADER WITH LOGO -->
         <header class="fixed top-0 left-0 right-0 z-50 bg-header-blue text-white shadow-lg">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-20">
-                    
-                    <!-- MODIFIED LOGO SECTION -->
                     <a href="{{ url_for('home') }}" class="flex items-center gap-3">
-                        <!-- Image Tag for the Logo -->
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Vendhan Info Tech Logo" class="h-10 w-auto">
-                        <!-- Text Part of the Logo -->
                         <div class="flex flex-col">
                             <span class="text-xl font-extrabold tracking-wider text-white">VENDHAN</span>
                             <span class="text-xs font-light tracking-widest text-gray-300">INFO TECH</span>
                         </div>
                     </a>
-                    
-                    <!-- DESKTOP NAVIGATION -->
                     <nav class="hidden lg:flex items-center h-full space-x-8">
                         <div class="h-full flex items-center">
                             <a href="{{ url_for('home') }}" class="main-nav-link no-underline {{ 'nav-active' if current_page == 'home' else '' }}">Home</a>
                         </div>
-                        
                         <div class="relative group h-full flex items-center">
                              <a href="{{ url_for('about_details') }}" class="main-nav-link {{ 'nav-active' if current_page == 'about' else '' }}">About</a>
                              <div class="custom-dropdown">
@@ -66,7 +58,6 @@
                                  <a href="{{ url_for('mission_vision') }}" class="custom-dropdown-link"><span>Mission & Vision</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
                              </div>
                         </div>
-
                         <div class="relative group h-full flex items-center">
                             <a href="{{ url_for('services_overview') }}" class="main-nav-link {{ 'nav-active' if current_page == 'services' else '' }}">Services</a>
                              <div class="custom-dropdown">
@@ -76,7 +67,6 @@
                                  <a href="{{ url_for('services_cybersecurity') }}" class="custom-dropdown-link"><span>Data & Cybersecurity</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
                              </div>
                         </div>
-
                         <div class="relative group h-full flex items-center">
                             <a href="{{ url_for('portfolio_logistics') }}" class="main-nav-link {{ 'nav-active' if current_page == 'portfolio' else '' }}">Portfolio</a>
                             <div class="custom-dropdown">
@@ -86,7 +76,6 @@
                                 <a href="{{ url_for('portfolio_erp') }}" class="custom-dropdown-link"><span>Enterprise ERP</span><i class="fas fa-arrow-up-right-from-square text-xs opacity-50"></i></a>
                             </div>
                        </div>
-                       
                         <div class="relative group h-full flex items-center">
                             <a href="{{ url_for('careers_overview') }}" class="main-nav-link {{ 'nav-active' if current_page == 'careers' else '' }}">Careers</a>
                             <div class="custom-dropdown">
@@ -96,8 +85,6 @@
                             </div>
                         </div>
                     </nav>
-
-                    <!-- RIGHT-SIDE CONTROLS -->
                     <div class="flex items-center space-x-6">
                         <div class="hidden sm:flex items-center space-x-2 text-sm">
                             <span>Mode:</span>
@@ -110,7 +97,6 @@
             </div>
         </header>
         
-        <!-- MOBILE MENU -->
         <div id="mobile-menu" class="lg:hidden fixed top-20 left-0 right-0 bottom-0 bg-header-blue z-40 p-8 transition-transform duration-300 ease-in-out translate-x-full">
             <nav class="flex flex-col space-y-4 overflow-y-auto">
                  <a href="{{ url_for('home') }}" class="mobile-nav-link">Home</a>
@@ -132,7 +118,7 @@
             {% block content %}{% endblock %}
         </main>
         
-        <!-- FOOTER -->
+                <!-- FOOTER -->
         <footer class="bg-gray-900 dark:bg-black text-gray-300">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -202,6 +188,7 @@
                 </form>
             </footer>
         </div>
+        
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

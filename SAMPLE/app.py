@@ -4,6 +4,7 @@ import logging
 import json
 import shutil
 from datetime import datetime, timedelta, timezone
+import requests
 
 from flask import Flask, render_template, request, jsonify, url_for, session, redirect, flash, send_from_directory
 from werkzeug.utils import secure_filename
@@ -131,7 +132,6 @@ class EventLog(db.Model):
 # ==============================================================================
 def log_event(event_type, details=""):
     try:
-        # This function must be called within a request context to get the IP
         if request:
             ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
             log = EventLog(ip_address=ip_address, event_type=event_type, details=details)
@@ -168,7 +168,6 @@ def allowed_file(filename):
 # ==============================================================================
 @login_manager.user_loader
 def load_user(user_id):
-    # Use the modern db.session.get() to avoid legacy warnings
     return db.session.get(AdminUser, int(user_id))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -282,7 +281,6 @@ def handle_contact():
         msg.html = render_template('email/contact_notification.html', data=form)
         mail.send(msg)
         session.pop('otp_verified_email', None)
-
         return jsonify({'message': 'Thank you! Your message has been sent successfully.'})
     except Exception as e:
         db.session.rollback()
@@ -333,7 +331,6 @@ def handle_apply():
         db.session.add(new_application)
         db.session.commit()
         log_event('APPLICATION_SUBMIT', f"Application from {email} for {form.get('position')}")
-
         msg = Message(f"New Job Application: {form.get('position')} - {applicant_name}", recipients=[app.config['MAIL_RECIPIENT']])
         msg.html = render_template('email/application_notification.html', data=form)
         for attachment in attachments:
@@ -341,7 +338,6 @@ def handle_apply():
                 msg.attach(attachment['filename'], attachment['content_type'], fp.read())
         mail.send(msg)
         session.pop('otp_verified_email', None)
-
         return jsonify({'message': 'Your application has been submitted successfully.'})
     except Exception as e:
         db.session.rollback()
@@ -399,34 +395,15 @@ def get_dashboard_data():
     }
     return jsonify({'stats': stats})
 
-@app.route('/api/application/<int:app_id>', methods=['GET'])
-@login_required
-def get_application_details(app_id):
-    app_obj = db.get_or_404(Application, app_id)
-    app_dir = os.path.join(app.config['UPLOAD_FOLDER'], app_obj.upload_folder)
-    files = []
-    if os.path.exists(app_dir):
-        files = [f for f in os.listdir(app_dir) if os.path.isfile(os.path.join(app_dir, f))]
-    
-    replies = [{'content': r.reply_content, 'date': r.reply_date.strftime('%Y-%m-%d %H:%M'), 'author': r.author.username} for r in app_obj.replies]
-
-    details = {
-        'id': app_obj.id, 'fullName': f"{app_obj.first_name} {app_obj.last_name}",
-        'email': app_obj.email, 'phone': app_obj.phone_number,
-        'location': f"{app_obj.city}, {app_obj.district}", 'position': app_obj.position,
-        'date': app_obj.submission_date.strftime('%Y-%m-%d'), 'status': app_obj.status,
-        'files': files, 'folder': app_obj.upload_folder, 'replies': replies,
-        'extra_course_name': app_obj.extra_course_name,
-        'extra_course_cert': app_obj.extra_course_cert_filename
-    }
-    return jsonify(details)
-    
 def item_to_dict(item):
     d = {}
     for c in item.__table__.columns:
         val = getattr(item, c.name)
         if isinstance(val, datetime):
-            d[c.name] = val.strftime('%Y-%m-%d %H:%M:%S')
+            if c.name in ['submission_date', 'timestamp']:
+                 d[c.name] = val.strftime('%Y-%m-%d %H:%M')
+            else:
+                 d[c.name] = val.strftime('%Y-%m-%d')
         else:
             d[c.name] = val
     return d
@@ -441,6 +418,39 @@ def get_all_generic(model_name):
     items = db.session.execute(db.select(models[model_name]).order_by(order_cols[model_name].desc())).scalars().all()
     return jsonify([item_to_dict(item) for item in items])
 
+@app.route('/api/application/<int:app_id>', methods=['GET'])
+@login_required
+def get_application_details(app_id):
+    app_obj = db.get_or_404(Application, app_id)
+    app_dir = os.path.join(app.config['UPLOAD_FOLDER'], app_obj.upload_folder)
+    files = []
+    if os.path.exists(app_dir):
+        files = [f for f in os.listdir(app_dir) if os.path.isfile(os.path.join(app_dir, f))]
+    
+    replies = [{'content': r.reply_content, 'date': r.reply_date.strftime('%Y-%m-%d %H:%M'), 'author': r.author.username} for r in app_obj.replies]
+    details = {
+        'id': app_obj.id, 'fullName': f"{app_obj.first_name} {app_obj.last_name}",
+        'email': app_obj.email, 'phone': app_obj.phone_number,
+        'location': f"{app_obj.city}, {app_obj.district}", 'position': app_obj.position,
+        'date': app_obj.submission_date.strftime('%Y-%m-%d'), 'status': app_obj.status,
+        'files': files, 'folder': app_obj.upload_folder, 'replies': replies,
+        'extra_course_name': app_obj.extra_course_name,
+        'extra_course_cert': app_obj.extra_course_cert_filename
+    }
+    return jsonify(details)
+
+@app.route('/api/message/<int:msg_id>', methods=['GET'])
+@login_required
+def get_message_details(msg_id):
+    msg_obj = db.get_or_404(ContactMessage, msg_id)
+    replies = [{'content': r.reply_content, 'date': r.reply_date.strftime('%Y-%m-%d %H:%M'), 'author': r.author.username} for r in msg_obj.replies]
+    details = {
+        'id': msg_obj.id, 'fullName': f"{msg_obj.first_name} {msg_obj.last_name}",
+        'email': msg_obj.email, 'date': msg_obj.submission_date.strftime('%Y-%m-%d'),
+        'status': msg_obj.status, 'message': msg_obj.message_content, 'replies': replies
+    }
+    return jsonify(details)
+
 @app.route('/api/generic/<model_name>', methods=['POST'])
 @login_required
 def add_generic(model_name):
@@ -449,8 +459,7 @@ def add_generic(model_name):
     data = request.get_json(); data.pop('id', None)
     try:
         new_item = models[model_name](**data)
-        db.session.add(new_item)
-        db.session.commit()
+        db.session.add(new_item); db.session.commit()
         log_event(f'ADMIN_ADD_{model_name.upper()}', f"Added: {data.get('title', '')}")
         return jsonify({'message': f'{model_name.capitalize()} added successfully.', 'item': item_to_dict(new_item)}), 201
     except Exception as e:
@@ -480,10 +489,9 @@ def delete_generic(model_name, item_id):
     item = db.get_or_404(models[model_name], item_id)
     title = getattr(item, 'title', f"ID {item_id}")
     try:
-        db.session.delete(item)
-        db.session.commit()
+        db.session.delete(item); db.session.commit()
         log_event(f'ADMIN_DELETE_{model_name.upper()}', f"Deleted: {title}")
-        return jsonify({'message': f'{model_name.capitalize()} deleted successfully.'})
+        return jsonify({'message': f'{model_name.capitalize()} deleted successfully.'}), 204
     except Exception as e:
         db.session.rollback(); return jsonify({'error': str(e)}), 500
 
@@ -539,9 +547,40 @@ def delete_item(item_type, item_id):
         
         db.session.delete(item); db.session.commit()
         log_event(f'ADMIN_DELETE_CONTACT/{item_type.upper()}', f"Deleted ID {item_id}")
-        return jsonify({'message': f'{item_type.capitalize()} deleted.'})
+        return jsonify({'message': f'{item_type.capitalize()} deleted.'}), 200
     except Exception as e:
         db.session.rollback(); return jsonify({'error': 'Error during deletion.'}), 500
+
+@app.route('/api/live-updates')
+def live_updates():
+    weather_key = os.getenv('OPENWEATHER_API_KEY')
+    news_key = os.getenv('NEWS_API_KEY')
+    weather_data, news_data = None, None
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+
+    if weather_key:
+        try:
+            if lat and lon:
+                weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weather_key}&units=metric"
+            else:
+                weather_url = f"https://api.openweathermap.org/data/2.5/weather?q=Dindigul,IN&appid={weather_key}&units=metric"
+            response = requests.get(weather_url, timeout=5)
+            response.raise_for_status()
+            weather_data = response.json()
+        except Exception as e:
+            logger.error(f"Could not fetch weather data: {e}"); weather_data = {"error": "Weather data is currently unavailable."}
+    if news_key:
+        try:
+            # CORRECTED URL: Use 'everything' endpoint which works with free keys.
+            news_url = f"https://newsapi.org/v2/everything?q=technology&language=en&sortBy=publishedAt&apiKey={news_key}&pageSize=10"
+            response = requests.get(news_url, timeout=5)
+            response.raise_for_status()
+            news_data = response.json()
+        except Exception as e:
+            logger.error(f"Could not fetch news data: {e}"); news_data = {"error": "News data is currently unavailable."}
+
+    return jsonify({'weather': weather_data, 'news': news_data})
 
 # ==============================================================================
 #  RUN THE APP

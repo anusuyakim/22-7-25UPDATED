@@ -5,71 +5,79 @@
 <!-- HERO SECTION -->
 <section id="home" class="relative w-full h-screen text-white bg-black">
     <div id="hero-slides-container" class="absolute inset-0 w-full h-full"></div>
-    <div id="hero-content-container" class="relative z-10 flex flex-col justify-end h-full container mx-auto px-4 sm:px-6 lg:px-8 pb-32 md:pb-40"></div>
-    <button id="hero-prev-btn" aria-label="Previous Slide" class="hero-nav-btn left-4"></button>
-    <button id="hero-next-btn" aria-label="Next Slide" class="hero-nav-btn right-4"></button>
-    <div id="hero-dots-container" class="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex space-x-3"></div>
+    <div id="hero-content-container" class="relative z-10 flex flex-col justify-center h-full container mx-auto px-4 sm:px-6 lg:px-8"></div>
+    <button id="hero-prev-btn" aria-label="Previous Slide" class="hero-nav-btn left-4 md:left-8"></button>
+    <button id="hero-next-btn" aria-label="Next Slide" class="hero-nav-btn right-4 md:right-8"></button>
+    <div id="hero-dots-container" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-3"></div>
 </section>
 
 <!-- ABOUT SECTION -->
-<section id="about" class="bg-brand-gray dark:bg-gray-900 py-24 sm:py-32">
+<section id="about" class="bg-white dark:bg-black py-24 sm:py-32">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center" data-aos="fade-up">
-            <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">About us</p>
-            <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Agile, New-Age and Future-Ready</h2>
-        </div>
-        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-y-12 md:gap-x-8 text-center" data-aos="fade-up" data-aos-delay="100">
-            <div><p class="text-5xl font-bold text-brand-blue dark:text-blue-400">200+</p><p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Projects delivered</p></div>
-            <div><p class="text-5xl font-bold text-brand-blue dark:text-blue-400">98%</p><p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Client satisfaction</p></div>
-            <div><p class="text-5xl font-bold text-brand-blue dark:text-blue-400">50+</p><p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Workforce strength</p></div>
-        </div>
-        <div class="mt-16 max-w-3xl mx-auto text-center" data-aos="fade-up" data-aos-delay="200">
-            <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">Part of the new wave of women-led technology firms, Vendhan Info Tech is a leading provider of innovative and sustainable technology services. We prioritise human centricity with technological prowess and engineering excellence to make solutions smarter, greener, and more efficient.</p>
-            <a href="{{ url_for('about_details') }}" class="mt-6 inline-block text-lg font-semibold text-brand-blue dark:text-blue-400 hover:underline">Read more about our story →</a>
-        </div>
-    </div>
-    <div class="mt-20 -mb-32" data-aos="fade-up" data-aos-delay="300">
-        <div class="relative h-48 sm:h-64 lg:h-80">
-            <div class="absolute inset-0 flex items-center justify-center gap-4 sm:gap-8">
-                <img class="w-1/3 md:w-1/4 max-w-md relative -mr-8 sm:-mr-16 rounded-lg shadow-2xl" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop" alt="Analytics Dashboard"/>
-                <img class="w-1/2 md:w-1/3 max-w-xl relative z-10 rounded-lg shadow-2xl" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop" alt="Laptop with code"/>
-                <img class="w-1/3 md:w-1/4 max-w-md relative -ml-8 sm:-ml-16 rounded-lg shadow-2xl" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="Team collaborating"/>
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div data-aos="fade-right">
+                <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">About Vendhan Info Tech</p>
+                <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Pioneering Progress Through Technology</h2>
+                <p class="mt-8 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                    As a dynamic, women-led technology firm, Vendhan Info Tech stands at the forefront of digital innovation. We deliver bespoke IT solutions that empower businesses to thrive in a complex world. Our philosophy merges human-centric design with engineering excellence, creating technology that is not just smarter, but also more sustainable and efficient.
+                </p>
+                <div class="mt-10 grid grid-cols-3 gap-8 text-center">
+                    <div><p class="text-5xl font-bold text-brand-blue dark:text-blue-400">200+</p><p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Projects Delivered</p></div>
+                    <div><p class="text-5xl font-bold text-brand-blue dark:text-blue-400">98%</p><p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Client Satisfaction</p></div>
+                    <div><p class="text-5xl font-bold text-brand-blue dark:text-blue-400">50+</p><p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Global Experts</p></div>
+                </div>
+                 <a href="{{ url_for('about_details') }}" class="mt-12 inline-block text-lg font-semibold text-brand-blue dark:text-blue-400 hover:underline">Discover Our Story →</a>
+            </div>
+            <div data-aos="fade-left" class="rounded-lg overflow-hidden shadow-2xl">
+                 <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="Team collaborating on a project" class="w-full h-auto">
             </div>
         </div>
     </div>
 </section>
 
 <!-- SERVICES SECTION -->
-<section id="services" class="bg-brand-gray dark:bg-gray-900 pt-56 pb-24 sm:pt-64 sm:pb-32">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<section id="services" class="relative bg-black text-white py-24 sm:py-32">
+    <div class="absolute inset-0 z-0 opacity-20">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop" alt="Code on a screen" class="w-full h-full object-cover">
+    </div>
+    <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-12 items-center">
-            <div class="max-w-md" data-aos="fade-right">
-                <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">Our Services</p>
-                <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Driving Business Value Through Technology</h2>
-                <p class="mt-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">We go beyond simple development. Our expert teams design, build, and manage bespoke software and cloud solutions that deliver tangible business outcomes, best-in-class security, and a superior user experience.</p>
-                <a href="{{ url_for('services_overview') }}" class="mt-8 inline-block text-lg font-semibold text-brand-blue dark:text-blue-400 border-b-2 border-brand-blue dark:border-blue-400 pb-1 hover:opacity-80 transition-opacity">Discover all our services →</a>
+            <div class="max-w-xl" data-aos="fade-right">
+                <p class="text-base font-semibold text-blue-300 uppercase tracking-wider">Our Services</p>
+                <h2 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Driving Business Value Through Technology</h2>
+                <p class="mt-6 text-lg text-gray-200 leading-relaxed">We go beyond simple development. Our expert teams design, build, and manage bespoke software and cloud solutions that deliver tangible business outcomes, best-in-class security, and a superior user experience.</p>
+                <a href="{{ url_for('services_overview') }}" class="mt-8 inline-block text-lg font-semibold text-blue-300 border-b-2 border-blue-300 pb-1 hover:opacity-80 transition-opacity">Discover all our services →</a>
             </div>
-            <div data-aos="fade-left"><img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=2106&auto=format&fit=crop" alt="Software Development" class="w-full h-auto rounded-lg shadow-xl" /></div>
         </div>
     </div>
 </section>
 
-<!-- PORTFOLIO CAROUSEL SECTION -->
-<section id="portfolio" class="bg-white dark:bg-black py-20">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div class="flex justify-between items-center mb-8" data-aos="fade-up">
-            <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Our Portfolio</h2>
-            <div class="hidden md:flex space-x-2">
-                <button id="portfolio-prev-btn" class="carousel-nav-btn"></button>
-                <button id="portfolio-next-btn" class="carousel-nav-btn"></button>
-            </div>
+<!-- NEW TATA-STYLE PORTFOLIO SECTION -->
+<section id="portfolio" class="bg-black text-white py-24 sm:py-32 relative overflow-hidden">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+         <div class="text-center mb-12" data-aos="fade-up">
+            <p class="text-base font-semibold text-blue-300 uppercase tracking-wider">Our Work</p>
+            <h2 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">Proven Success Across Industries</h2>
         </div>
-        <div id="portfolio-scroll-container" class="flex space-x-6 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar" data-aos="fade-up" data-aos-delay="100"></div>
+    </div>
+    <div id="portfolio-slider-container" class="relative" data-aos="fade-up" data-aos-delay="100">
+        <div id="portfolio-slider" class="flex transition-transform duration-500 ease-in-out">
+            <!-- Portfolio cards will be injected by JS -->
+        </div>
+        <!-- Navigation Buttons -->
+        <button id="portfolio-prev-btn-new" class="portfolio-nav-btn left-4 md:left-8"> < </button>
+        <button id="portfolio-next-btn-new" class="portfolio-nav-btn right-4 md:right-8"> > </button>
+    </div>
+    <!-- Progress Bar -->
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="w-full bg-gray-700 rounded-full h-1">
+            <div id="portfolio-progress-bar" class="bg-white h-1 rounded-full transition-all duration-500"></div>
+        </div>
     </div>
 </section>
 
 <!-- ANNOUNCEMENTS SECTION -->
-<section id="announcements" class="relative py-24 sm:py-32 bg-brand-blue dark:bg-brand-blue text-white">
+<section id="announcements" class="relative py-24 sm:py-32 bg-header-blue text-white">
     <div class="absolute inset-0 bg-black opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 1rem 1rem;"></div>
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="max-w-2xl" data-aos="fade-right">
@@ -79,7 +87,7 @@
         <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% if announcements %}
                 {% for item in announcements %}
-                <div class="bg-white/10 dark:bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 flex flex-col hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
                     <p class="text-sm text-blue-200">{{ item.date.strftime('%B %d, %Y') }} | <span class="font-bold uppercase">{{ item.category }}</span></p>
                     <h3 class="mt-2 text-lg font-semibold text-white">{{ item.title }}</h3>
                     <p class="mt-2 text-sm text-blue-200 flex-grow">{{ item.content }}</p>
@@ -99,11 +107,11 @@
 </section>
 
 <!-- CAREERS SECTION -->
-<section id="careers" class="bg-brand-gray dark:bg-gray-900 p-4 sm:p-8">
+<section id="careers" class="relative bg-brand-gray dark:bg-gray-900 p-4 sm:p-8">
     <div class="container mx-auto rounded-2xl overflow-hidden shadow-2xl" data-aos="fade-in">
         <div class="relative bg-black">
-            <img src="https://images.unsplash.com/photo-1554231994-27c5155415af?q=80&w=2070&auto=format&fit=crop" alt="People working in tech" class="w-full h-[60vh] object-cover opacity-50">
-            <div class="absolute inset-0 flex items-center bg-gradient-to-r from-black/60 to-transparent">
+            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop" alt="Team meeting" class="w-full h-full absolute inset-0 object-cover opacity-20">
+            <div class="relative z-10 flex items-center h-[60vh]">
                 <div class="container mx-auto px-4 sm:px-8 lg:px-12 text-white max-w-2xl">
                     <p class="font-semibold text-lg text-blue-300 uppercase tracking-wider">Careers</p>
                     <h2 class="text-3xl md:text-5xl font-bold mt-2">United by Passion and Talent</h2>
@@ -112,6 +120,32 @@
                         <a href="{{ url_for('careers_overview') }}" class="bg-brand-blue hover:bg-brand-blue-light text-white font-semibold py-3 px-6 rounded-md transition-colors">Explore Opportunities</a>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LIVE UPDATES SECTION (ONLY ON THE HOMEPAGE) -->
+<section class="bg-brand-gray dark:bg-black py-20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <p class="text-base font-semibold text-brand-blue dark:text-blue-400 uppercase tracking-wider">Stay Connected & Informed</p>
+            <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Live from Our World</h2>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 bg-white dark:bg-brand-dark p-8 rounded-xl shadow-lg" data-aos="fade-up">
+                <div class="flex items-center gap-4 mb-4">
+                    <i class="fas fa-map-marker-alt text-3xl text-brand-blue dark:text-blue-400"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Your Local Weather</h3>
+                </div>
+                <div id="weather-card-content"></div>
+            </div>
+            <div class="lg:col-span-2 bg-white dark:bg-brand-dark p-8 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                <div class="flex items-center gap-4 mb-4">
+                    <i class="fas fa-newspaper text-3xl text-brand-blue dark:text-blue-400"></i>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Tech News from India</h3>
+                </div>
+                <div id="news-card-content" class="space-y-3 max-h-64 overflow-y-auto pr-2"></div>
             </div>
         </div>
     </div>
