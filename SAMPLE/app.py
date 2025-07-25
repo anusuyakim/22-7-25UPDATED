@@ -31,7 +31,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
 
 # --- Configure Database ---
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://userdetails_xtsq_user:nE0DUma3B8iBuGh3nJ0wdfzVACmyG6sr@dpg-d21k39vgi27c73e14rlg-a.singapore-postgres.render.com/userdetails_xtsq'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
