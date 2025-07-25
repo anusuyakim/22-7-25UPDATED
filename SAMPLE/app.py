@@ -30,11 +30,21 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
 
-# --- Configure Database ---
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://userdetails_xtsq_user:nE0DUma3B8iBuGh3nJ0wdfzVACmyG6sr@dpg-d21k39vgi27c73e14rlg-a.singapore-postgres.render.com/userdetails_xtsq'
+# --- Configure Database (MODIFIED FOR RENDER POSTGRESQL) ---
+# Check if the DATABASE_URL environment variable is set (it will be on Render)
+if 'DATABASE_URL' in os.environ:
+    # Render's PostgreSQL URL starts with postgres://, but SQLAlchemy needs postgresql://
+    # This line automatically fixes that for you.
+    database_url = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # If running locally, fall back to the SQLite database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 
 # --- Configure Flask-Mail ---
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -65,7 +75,6 @@ class AdminUser(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     replies = db.relationship('AdminReply', backref='author', lazy=True)
-
     def set_password(self, password): self.password_hash = generate_password_hash(password)
     def check_password(self, password): return check_password_hash(self.password_hash, password)
 
@@ -223,7 +232,6 @@ def careers_overview():
     openings = db.session.execute(db.select(JobOpening).filter_by(is_active=True).order_by(JobOpening.created_at.desc())).scalars().all()
     return render_template('careers_overview.html', current_page='careers', openings=openings)
 
-# ... (all other static frontend routes remain unchanged)
 @app.route('/about-us')
 def about_details(): return render_template('about_details.html', current_page='about')
 @app.route('/mission-vision')
@@ -551,6 +559,9 @@ def delete_item(item_type, item_id):
     except Exception as e:
         db.session.rollback(); return jsonify({'error': 'Error during deletion.'}), 500
 
+# ==============================================================================
+#  LIVE UPDATES API
+# ==============================================================================
 @app.route('/api/live-updates')
 def live_updates():
     weather_key = os.getenv('OPENWEATHER_API_KEY')
@@ -564,15 +575,15 @@ def live_updates():
             if lat and lon:
                 weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weather_key}&units=metric"
             else:
-                weather_url = f"https://api.openweathermap.org/data/2.5/weather?q=Dindigul,IN&appid={weather_key}&units=metric"
+                weather_url = f"https://api.openweathermap.org/data/2.5/weather?q=Oddanchatram,IN&appid={weather_key}&units=metric"
             response = requests.get(weather_url, timeout=5)
             response.raise_for_status()
             weather_data = response.json()
         except Exception as e:
             logger.error(f"Could not fetch weather data: {e}"); weather_data = {"error": "Weather data is currently unavailable."}
+    
     if news_key:
         try:
-            # CORRECTED URL: Use 'everything' endpoint which works with free keys.
             news_url = f"https://newsapi.org/v2/everything?q=technology&language=en&sortBy=publishedAt&apiKey={news_key}&pageSize=10"
             response = requests.get(news_url, timeout=5)
             response.raise_for_status()
@@ -581,6 +592,7 @@ def live_updates():
             logger.error(f"Could not fetch news data: {e}"); news_data = {"error": "News data is currently unavailable."}
 
     return jsonify({'weather': weather_data, 'news': news_data})
+
 
 # ==============================================================================
 #  RUN THE APP
