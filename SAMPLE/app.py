@@ -31,20 +31,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
 
 # --- Configure Database (MODIFIED FOR RENDER POSTGRESQL) ---
-# Check if the DATABASE_URL environment variable is set (it will be on Render)
 if 'DATABASE_URL' in os.environ:
-    # Render's PostgreSQL URL starts with postgres://, but SQLAlchemy needs postgresql://
-    # This line automatically fixes that for you.
     database_url = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 else:
-    # If running locally, fall back to the SQLite database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.instance_path, 'app.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 
 # --- Configure Flask-Mail ---
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -156,17 +151,25 @@ def visitor_tracker():
 
 app.before_request(visitor_tracker)
 
-chatbot = None
-def initialize_chatbot():
+# --- MODIFIED CHATBOT INITIALIZATION ---
+chatbot = None # Start with the chatbot as None
+
+def get_chatbot():
+    """
+    Initializes the chatbot on the first request that needs it.
+    This ensures all environment variables are loaded, especially on Render.
+    """
     global chatbot
     if chatbot is None:
         try:
-            logger.info("Initializing chatbot...")
+            logger.info("Initializing chatbot for the first time...")
             chatbot = create_enhanced_chatbot()
             chatbot.load_model()
             logger.info("Chatbot initialized successfully!")
         except Exception as e:
-            logger.error(f"Failed to initialize chatbot: {e}", exc_info=True)
+            logger.error(f"FATAL: Failed to initialize chatbot: {e}", exc_info=True)
+            # In case of failure, chatbot will remain None
+    return chatbot
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -354,8 +357,15 @@ def handle_apply():
 
 @app.route('/api/chatbot', methods=['POST'])
 def chatbot_response():
-    if not chatbot: return jsonify({'response': 'Sorry, the AI Assistant is currently offline.'})
-    response = chatbot.chat(request.json.get('message', ''))
+    bot = get_chatbot()
+    if not bot:
+        return jsonify({'response': 'Sorry, the AI Assistant is currently offline due to a configuration issue.'})
+    
+    user_message = request.json.get('message')
+    if not user_message:
+        return jsonify({'response': 'I need a message to respond to!'})
+    
+    response = bot.chat(user_message)
     return jsonify(response)
     
 @app.route('/api/send-otp', methods=['POST'])
@@ -598,6 +608,5 @@ def live_updates():
 #  RUN THE APP
 # ==============================================================================
 if __name__ == '__main__':
-    with app.app_context():
-        initialize_chatbot()
+    # We no longer initialize chatbot on startup for better deployment compatibility
     app.run(host='0.0.0.0', port=5003, debug=True)
