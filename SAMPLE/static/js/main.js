@@ -2,7 +2,6 @@
 function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, timerId, formType, submitUrl) {
     const form = document.getElementById(formId);
     if (!form) return;
-
     const sendVerificationBtn = document.getElementById(sendBtnId);
     const verifyOtpBtn = document.getElementById(verifyBtnId);
     const submitBtn = document.getElementById(submitBtnId);
@@ -11,19 +10,16 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
     const successMessage = form.querySelector('.success-message');
     const errorMessage = form.querySelector('.error-message');
     let countdown;
-
     function showMessage(element, message) {
         hideMessages();
         const span = element.querySelector('span');
         span.innerHTML = message;
         element.style.display = 'block';
     }
-
     function hideMessages() {
         if (successMessage) successMessage.style.display = 'none';
         if (errorMessage) errorMessage.style.display = 'none';
     }
-
     function startTimer(duration) {
         let timer = duration;
         otpTimer.style.display = 'block';
@@ -40,7 +36,6 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             }
         }, 1000);
     }
-    
     sendVerificationBtn.addEventListener('click', async () => {
         hideMessages();
         const emailInput = form.querySelector('input[name="email"]');
@@ -48,10 +43,8 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
         if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
             return showMessage(errorMessage, 'Please enter a valid email address.');
         }
-
         sendVerificationBtn.disabled = true;
         sendVerificationBtn.textContent = 'Sending...';
-
         try {
             const response = await fetch('/api/send-otp', {
                 method: 'POST',
@@ -60,7 +53,6 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Failed to send OTP.');
-            
             showMessage(successMessage, data.message);
             otpSection.style.display = 'block';
             clearInterval(countdown);
@@ -72,7 +64,6 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             sendVerificationBtn.textContent = 'Send Verification Code';
         }
     });
-
     const otpInputs = otpSection.querySelectorAll('.otp-input');
     otpInputs.forEach((input, index) => {
         input.addEventListener('input', () => {
@@ -86,16 +77,13 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             }
         });
     });
-
     verifyOtpBtn.addEventListener('click', async () => {
         hideMessages();
         const otp = Array.from(otpInputs).map(input => input.value).join('');
         const email = form.querySelector('input[name="email"]').value;
-
         if (otp.length !== 6) {
             return showMessage(errorMessage, 'Please enter the full 6-digit code.');
         }
-        
         try {
             const response = await fetch('/api/verify-otp', {
                 method: 'POST',
@@ -104,7 +92,6 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Verification failed.');
-            
             showMessage(successMessage, data.message);
             otpSection.style.display = 'none';
             submitBtn.disabled = false;
@@ -114,13 +101,11 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
              showMessage(errorMessage, error.message);
         }
     });
-
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideMessages();
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
-
         try {
             const formData = new FormData(form);
             const response = await fetch(submitUrl, {
@@ -129,11 +114,9 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Submission failed.');
-            
             showMessage(successMessage, data.message);
             form.reset();
             submitBtn.disabled = true;
-
         } catch (error) {
             showMessage(errorMessage, error.message);
             submitBtn.disabled = false; 
@@ -196,11 +179,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroPrevBtn = document.getElementById('hero-prev-btn');
     const heroNextBtn = document.getElementById('hero-next-btn');
     if (heroSlidesContainer) {
+        // CORRECTED, VALID IMAGE URLS
         const slidesData = [
             { supertitle: 'Pioneering Women-Led Technology', title: 'Engineering the Future, Led by Vision', subtitle: 'We translate your unique business vision into high-performance, secure, and scalable software solutions.', img: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop', link: '/about-us' },
-            { supertitle: 'AI & Machine Learning', title: 'Intelligent Solutions, Real-World Impact', subtitle: 'We build custom AI models to automate processes, predict outcomes, and unlock hidden value in your data.', img: 'https://images.unsplash.com/photo-1620712943543-270322458121?q=80&w=2206&auto=format&fit=crop', link: '/services/ai-machine-learning' },
-            { supertitle: 'Custom Software Development', title: 'Your Vision, Engineered', subtitle: 'From complex enterprise platforms to intuitive mobile apps, we deliver high-performance software tailored to you.', img: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop', link: '/services/software-development' }
+            { supertitle: 'AI & Machine Learning', title: 'Intelligent Solutions, Real-World Impact', subtitle: 'We build custom AI models to automate processes, predict outcomes, and unlock hidden value in your data.', img: 'https://images.unsplash.com/photo-1518349619113-03114f06ac3a?q=80&w=2070&auto=format&fit=crop', link: '/services/ai-machine-learning' },
+            { supertitle: 'Custom Software Development', title: 'Your Vision, Engineered', subtitle: 'From complex enterprise platforms to intuitive mobile apps, we deliver high-performance software tailored to you.', img: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2070&auto=format&fit=crop', link: '/services/software-development' }
         ];
+        
         let currentSlide = 0;
         let slideInterval;
         slidesData.forEach((slide, index) => {
@@ -250,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { img: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop', title: 'Custom Enterprise ERP System', link: '/portfolio/enterprise-erp' },
             { img: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop', title: 'Predictive Analytics Engine', link: '/portfolio/ai-logistics-platform' }
         ];
-
         portfolioSlider.innerHTML = portfolioData.map(item => `
             <div class="portfolio-slider-card">
                 <a href="${item.link}">
@@ -261,64 +245,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </a>
             </div>`).join('');
-
         const prevBtn = document.getElementById('portfolio-prev-btn-new');
         const nextBtn = document.getElementById('portfolio-next-btn-new');
         const progressBar = document.getElementById('portfolio-progress-bar');
-        
         let currentIndex = 0;
         const totalSlides = portfolioData.length;
-        
-        // Determine how many slides are visible based on screen width
         const getSlidesToDisplay = () => {
             if (window.innerWidth >= 1024) return 4;
             if (window.innerWidth >= 640) return 2;
             return 1;
         }
-
         let slidesToDisplay = getSlidesToDisplay();
-
         function updateSlider() {
-            // Adjust card widths based on how many are displayed
             const cards = portfolioSlider.querySelectorAll('.portfolio-slider-card');
             cards.forEach(card => {
                 card.style.flexBasis = `${100 / slidesToDisplay}%`;
             });
-
             const offset = -currentIndex * (100 / slidesToDisplay);
             portfolioSlider.style.transform = `translateX(${offset}%)`;
-            
             const progressWidth = ((currentIndex + slidesToDisplay) / totalSlides) * 100;
             progressBar.style.width = `${progressWidth > 100 ? 100 : progressWidth}%`;
-
             prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
             nextBtn.style.display = currentIndex >= totalSlides - slidesToDisplay ? 'none' : 'flex';
         }
-
         nextBtn.addEventListener('click', () => {
             if (currentIndex < totalSlides - slidesToDisplay) {
                 currentIndex++;
                 updateSlider();
             }
         });
-
         prevBtn.addEventListener('click', () => {
             if (currentIndex > 0) {
                 currentIndex--;
                 updateSlider();
             }
         });
-
         window.addEventListener('resize', () => {
             slidesToDisplay = getSlidesToDisplay();
-            // Reset index if it becomes invalid on resize
             if (currentIndex > totalSlides - slidesToDisplay) {
                 currentIndex = totalSlides - slidesToDisplay;
             }
             updateSlider();
         });
-
-        // Initial setup
         updateSlider();
     }
 
