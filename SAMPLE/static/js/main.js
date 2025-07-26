@@ -2,6 +2,7 @@
 function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, timerId, formType, submitUrl) {
     const form = document.getElementById(formId);
     if (!form) return;
+
     const sendVerificationBtn = document.getElementById(sendBtnId);
     const verifyOtpBtn = document.getElementById(verifyBtnId);
     const submitBtn = document.getElementById(submitBtnId);
@@ -10,32 +11,47 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
     const successMessage = form.querySelector('.success-message');
     const errorMessage = form.querySelector('.error-message');
     let countdown;
+
     function showMessage(element, message) {
         hideMessages();
         const span = element.querySelector('span');
         span.innerHTML = message;
         element.style.display = 'block';
     }
+
     function hideMessages() {
         if (successMessage) successMessage.style.display = 'none';
         if (errorMessage) errorMessage.style.display = 'none';
     }
+
     function startTimer(duration) {
         let timer = duration;
         otpTimer.style.display = 'block';
-        sendVerificationBtn.style.display = 'none';
+        
+        // Hide the main button and show the timer
+        const verificationSection = form.querySelector(`#${sendBtnId.replace('send', '').replace('Btn', 'VerificationSection')}`);
+        if(verificationSection) verificationSection.style.display = 'none';
+
         countdown = setInterval(() => {
             const minutes = parseInt(timer / 60, 10);
             const seconds = parseInt(timer % 60, 10);
             otpTimer.textContent = `Resend available in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             if (--timer < 0) {
                 clearInterval(countdown);
-                otpTimer.innerHTML = '';
-                sendVerificationBtn.textContent = 'Resend Code';
-                sendVerificationBtn.style.display = 'inline-block';
+                // Create a clickable resend link
+                otpTimer.innerHTML = `<a href="#" class="resend-otp-link text-blue-400 hover:underline">Resend Code</a>`;
+                const resendLink = otpTimer.querySelector('.resend-otp-link');
+                if (resendLink) {
+                    resendLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        otpTimer.textContent = 'Sending...';
+                        sendVerificationBtn.click();
+                    });
+                }
             }
         }, 1000);
     }
+    
     sendVerificationBtn.addEventListener('click', async () => {
         hideMessages();
         const emailInput = form.querySelector('input[name="email"]');
@@ -43,8 +59,10 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
         if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
             return showMessage(errorMessage, 'Please enter a valid email address.');
         }
+
         sendVerificationBtn.disabled = true;
         sendVerificationBtn.textContent = 'Sending...';
+
         try {
             const response = await fetch('/api/send-otp', {
                 method: 'POST',
@@ -53,18 +71,36 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Failed to send OTP.');
+            
             showMessage(successMessage, data.message);
             otpSection.style.display = 'block';
             clearInterval(countdown);
-            startTimer(120);
+            startTimer(120); // 2 minute timer
         } catch (error) {
             showMessage(errorMessage, error.message);
         } finally {
             sendVerificationBtn.disabled = false;
-            sendVerificationBtn.textContent = 'Send Verification Code';
+            // Restore original button text
+            const originalButtonText = formId === 'contactForm' ? 'Verify Email to Send' : 'Send Verification Code';
+            sendVerificationBtn.textContent = originalButtonText;
         }
     });
+
     const otpInputs = otpSection.querySelectorAll('.otp-input');
+    
+    // Handle pasting code
+    otpInputs[0].addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasteData = e.clipboardData.getData('text').trim();
+        if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
+            otpInputs.forEach((input, index) => {
+                input.value = pasteData[index];
+            });
+            otpInputs[5].focus(); // Move focus to the last input
+            verifyOtpBtn.click(); // Automatically try to verify
+        }
+    });
+
     otpInputs.forEach((input, index) => {
         input.addEventListener('input', () => {
             if (input.value && index < otpInputs.length - 1) {
@@ -77,13 +113,16 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             }
         });
     });
+
     verifyOtpBtn.addEventListener('click', async () => {
         hideMessages();
         const otp = Array.from(otpInputs).map(input => input.value).join('');
         const email = form.querySelector('input[name="email"]').value;
+
         if (otp.length !== 6) {
             return showMessage(errorMessage, 'Please enter the full 6-digit code.');
         }
+        
         try {
             const response = await fetch('/api/verify-otp', {
                 method: 'POST',
@@ -92,20 +131,27 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Verification failed.');
+            
             showMessage(successMessage, data.message);
             otpSection.style.display = 'none';
             submitBtn.disabled = false;
             clearInterval(countdown);
             otpTimer.style.display = 'none';
+            
+            const verificationSection = form.querySelector(`#${sendBtnId.replace('send', '').replace('Btn', 'VerificationSection')}`);
+            if(verificationSection) verificationSection.style.display = 'none';
+
         } catch (error) {
              showMessage(errorMessage, error.message);
         }
     });
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideMessages();
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
+
         try {
             const formData = new FormData(form);
             const response = await fetch(submitUrl, {
@@ -114,9 +160,11 @@ function setupForm(formId, sendBtnId, verifyBtnId, submitBtnId, otpSectionId, ti
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'Submission failed.');
+            
             showMessage(successMessage, data.message);
             form.reset();
             submitBtn.disabled = true;
+
         } catch (error) {
             showMessage(errorMessage, error.message);
             submitBtn.disabled = false; 
@@ -179,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroPrevBtn = document.getElementById('hero-prev-btn');
     const heroNextBtn = document.getElementById('hero-next-btn');
     if (heroSlidesContainer) {
-        // CORRECTED, VALID IMAGE URLS
         const slidesData = [
             { supertitle: 'Pioneering Women-Led Technology', title: 'Engineering the Future, Led by Vision', subtitle: 'We translate your unique business vision into high-performance, secure, and scalable software solutions.', img: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2084&auto=format&fit=crop', link: '/about-us' },
             { supertitle: 'AI & Machine Learning', title: 'Intelligent Solutions, Real-World Impact', subtitle: 'We build custom AI models to automate processes, predict outcomes, and unlock hidden value in your data.', img: 'https://images.unsplash.com/photo-1518349619113-03114f06ac3a?q=80&w=2070&auto=format&fit=crop', link: '/services/ai-machine-learning' },

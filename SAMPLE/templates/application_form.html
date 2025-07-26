@@ -49,14 +49,8 @@
                     <div class="grid grid-cols-1 gap-x-8 gap-y-6">
                         <div>
                             <label for="position" class="form-label">Applying for Position *</label>
-                            <select name="position" required class="form-select">
-                                <option value="" selected disabled>Select a position</option>
-                                <option value="Software Developer">Software Developer</option>
-                                <option value="Data Analyst">Data Analyst</option>
-                                <option value="AI/ML Engineer">AI/ML Engineer</option>
-                                <option value="Internship">Internship</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <!-- MODIFICATION: Changed from <select> to <input> -->
+                            <input type="text" name="position" required class="form-input" placeholder="e.g., Software Developer, AI/ML Engineer">
                         </div>
                     </div>
                 </fieldset>
@@ -120,7 +114,7 @@
                     </div>
                 </fieldset>
                 
-                <!-- NEW: Extra Courses -->
+                <!-- Extra Courses -->
                 <fieldset class="space-y-6">
                     <legend class="text-xl font-semibold text-white border-b border-gray-600 pb-2 mb-6">4. Extra Curriculars / Diploma Courses</legend>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 items-end">
